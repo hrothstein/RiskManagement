@@ -22,8 +22,8 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:3002/api/v1',
-        description: 'Development server'
+        url: process.env.API_BASE_URL || '/api/v1',
+        description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server'
       }
     ],
     tags: [

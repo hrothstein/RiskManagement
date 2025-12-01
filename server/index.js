@@ -92,13 +92,16 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, '127.0.0.1', () => {
+const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1';
+const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+
+app.listen(PORT, HOST, () => {
   console.log(`\n🚀 Risk Management System started successfully!`);
   console.log(`📍 Server running on port ${PORT}`);
-  console.log(`🌐 Web UI: http://localhost:${PORT}/`);
-  console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
-  console.log(`🔌 API Base: http://localhost:${PORT}/api/v1`);
-  console.log(`💚 Health: http://localhost:${PORT}/api/v1/health\n`);
+  console.log(`🌐 Web UI: ${BASE_URL}/`);
+  console.log(`📚 API Docs: ${BASE_URL}/api-docs`);
+  console.log(`🔌 API Base: ${BASE_URL}/api/v1`);
+  console.log(`💚 Health: ${BASE_URL}/api/v1/health\n`);
 });
 
 module.exports = app;
