@@ -1,0 +1,68 @@
+[
+  {
+    "benchmarkId": "BM-001",
+    "benchmarkName": "S&P 500 Total Return",
+    "benchmarkSymbol": "SPY",
+    "benchmarkType": "EQUITY",
+    "description": "Large-cap U.S. equity market benchmark",
+    "annualizedReturn": 10.5,
+    "annualizedVolatility": 15.2,
+    "sharpeRatio": 0.69,
+    "maxDrawdown": -33.8,
+    "isDefault": true,
+    "isActive": true
+  },
+  {
+    "benchmarkId": "BM-002",
+    "benchmarkName": "Bloomberg U.S. Aggregate Bond",
+    "benchmarkSymbol": "BND",
+    "benchmarkType": "FIXED_INCOME",
+    "description": "Broad U.S. investment-grade bond market",
+    "annualizedReturn": 3.2,
+    "annualizedVolatility": 3.5,
+    "sharpeRatio": 0.91,
+    "maxDrawdown": -8.2,
+    "isDefault": false,
+    "isActive": true
+  },
+  {
+    "benchmarkId": "BM-003",
+    "benchmarkName": "60/40 Balanced Portfolio",
+    "benchmarkSymbol": "BALANCED",
+    "benchmarkType": "BALANCED",
+    "description": "Traditional balanced portfolio (60% stocks, 40% bonds)",
+    "annualizedReturn": 7.8,
+    "annualizedVolatility": 9.5,
+    "sharpeRatio": 0.82,
+    "maxDrawdown": -21.5,
+    "isDefault": false,
+    "isActive": true
+  },
+  {
+    "benchmarkId": "BM-004",
+    "benchmarkName": "MSCI EAFE",
+    "benchmarkSymbol": "EFA",
+    "benchmarkType": "EQUITY",
+    "description": "International developed markets equity",
+    "annualizedReturn": 7.2,
+    "annualizedVolatility": 16.8,
+    "sharpeRatio": 0.43,
+    "maxDrawdown": -38.5,
+    "isDefault": false,
+    "isActive": true
+  },
+  {
+    "benchmarkId": "BM-005",
+    "benchmarkName": "Russell 2000",
+    "benchmarkSymbol": "IWM",
+    "benchmarkType": "EQUITY",
+    "description": "Small-cap U.S. equity market",
+    "annualizedReturn": 9.8,
+    "annualizedVolatility": 20.5,
+    "sharpeRatio": 0.48,
+    "maxDrawdown": -42.3,
+    "isDefault": false,
+    "isActive": true
+  }
+]
+

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Management System - Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1>🛡️ Risk Management System</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="active">Dashboard</a></li>
+                <li><a href="/investors.html">Investors</a></li>
+                <li><a href="/analyzer.html">Risk Analyzer</a></li>
+                <li><a href="/scenarios.html">Scenarios</a></li>
+                <li><a href="/api-docs" target="_blank">API Docs</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h2>Portfolio Risk Management Dashboard</h2>
+            <p>Comprehensive risk assessment, scoring, and analysis for individual investors</p>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="investorCount">-</div>
+                    <div class="stat-label">Total Investors</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="profileCount">-</div>
+                    <div class="stat-label">Risk Profiles</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📝</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="assessmentCount">-</div>
+                    <div class="stat-label">Assessments</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="scenarioCount">-</div>
+                    <div class="stat-label">Stress Scenarios</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Quick Actions</h3>
+            <div class="action-grid">
+                <a href="/investors.html" class="action-card">
+                    <div class="action-icon">👥</div>
+                    <h4>View Investors</h4>
+                    <p>Browse all investors and their risk profiles</p>
+                </a>
+                <a href="/analyzer.html" class="action-card">
+                    <div class="action-icon">🔍</div>
+                    <h4>Analyze Portfolio</h4>
+                    <p>Calculate risk metrics and get recommendations</p>
+                </a>
+                <a href="/scenarios.html" class="action-card">
+                    <div class="action-icon">📉</div>
+                    <h4>Stress Testing</h4>
+                    <p>Run stress test scenarios on portfolios</p>
+                </a>
+                <a href="/api-docs" class="action-card" target="_blank">
+                    <div class="action-icon">📚</div>
+                    <h4>API Documentation</h4>
+                    <p>Interactive Swagger API documentation</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Risk Categories</h3>
+            <div class="risk-categories" id="riskCategories">
+                <div class="loading">Loading risk categories...</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>System Health</h3>
+            <div class="health-status" id="healthStatus">
+                <div class="loading">Checking system health...</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Risk Management System | Version 1.0.0 | <a href="/api-docs" target="_blank">API Documentation</a></p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
+

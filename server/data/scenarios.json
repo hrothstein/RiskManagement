@@ -1,0 +1,283 @@
+[
+  {
+    "scenarioId": "SCN-001",
+    "scenarioName": "2008 Financial Crisis",
+    "scenarioDescription": "Simulates market conditions similar to the 2008 financial crisis",
+    "scenarioCategory": "HISTORICAL",
+    "isActive": true,
+    "shockParameters": {
+      "equityShock": -45,
+      "bondShock": 8,
+      "creditSpreadChange": 350,
+      "volatilitySpike": 80,
+      "correlationShift": 0.85
+    },
+    "sectorShocks": {
+      "TECHNOLOGY": -50,
+      "FINANCIAL": -60,
+      "HEALTHCARE": -25,
+      "CONSUMER_DISCRETIONARY": -45,
+      "CONSUMER_STAPLES": -15,
+      "UTILITIES": -10,
+      "ENERGY": -35,
+      "REAL_ESTATE": -40,
+      "INDUSTRIALS": -42,
+      "MATERIALS": -38,
+      "TELECOMMUNICATIONS": -30
+    },
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "scenarioId": "SCN-002",
+    "scenarioName": "2020 COVID Crash",
+    "scenarioDescription": "Simulates the rapid market decline during the COVID-19 pandemic onset",
+    "scenarioCategory": "HISTORICAL",
+    "isActive": true,
+    "shockParameters": {
+      "equityShock": -34,
+      "bondShock": 5,
+      "creditSpreadChange": 280,
+      "volatilitySpike": 75,
+      "correlationShift": 0.80
+    },
+    "sectorShocks": {
+      "TECHNOLOGY": -25,
+      "FINANCIAL": -35,
+      "HEALTHCARE": -15,
+      "CONSUMER_DISCRETIONARY": -40,
+      "CONSUMER_STAPLES": -10,
+      "UTILITIES": -12,
+      "ENERGY": -50,
+      "REAL_ESTATE": -35,
+      "INDUSTRIALS": -38,
+      "MATERIALS": -32,
+      "TELECOMMUNICATIONS": -20
+    },
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "scenarioId": "SCN-003",
+    "scenarioName": "Dot-Com Bubble (2000)",
+    "scenarioDescription": "Simulates the tech bubble burst of 2000-2002",
+    "scenarioCategory": "HISTORICAL",
+    "isActive": true,
+    "shockParameters": {
+      "equityShock": -49,
+      "bondShock": 12,
+      "creditSpreadChange": 220,
+      "volatilitySpike": 65,
+      "correlationShift": 0.70
+    },
+    "sectorShocks": {
+      "TECHNOLOGY": -78,
+      "FINANCIAL": -25,
+      "HEALTHCARE": -20,
+      "CONSUMER_DISCRETIONARY": -35,
+      "CONSUMER_STAPLES": -8,
+      "UTILITIES": -5,
+      "ENERGY": -15,
+      "REAL_ESTATE": -18,
+      "INDUSTRIALS": -28,
+      "MATERIALS": -22,
+      "TELECOMMUNICATIONS": -55
+    },
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "scenarioId": "SCN-004",
+    "scenarioName": "Black Monday (1987)",
+    "scenarioDescription": "Simulates the sudden one-day crash of October 1987",
+    "scenarioCategory": "HISTORICAL",
+    "isActive": true,
+    "shockParameters": {
+      "equityShock": -22,
+      "bondShock": 3,
+      "creditSpreadChange": 150,
+      "volatilitySpike": 85,
+      "correlationShift": 0.90
+    },
+    "sectorShocks": {
+      "TECHNOLOGY": -24,
+      "FINANCIAL": -26,
+      "HEALTHCARE": -18,
+      "CONSUMER_DISCRETIONARY": -23,
+      "CONSUMER_STAPLES": -15,
+      "UTILITIES": -12,
+      "ENERGY": -25,
+      "REAL_ESTATE": -22,
+      "INDUSTRIALS": -24,
+      "MATERIALS": -23,
+      "TELECOMMUNICATIONS": -20
+    },
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "scenarioId": "SCN-005",
+    "scenarioName": "Rising Interest Rates",
+    "scenarioDescription": "Rapid increase in interest rates scenario (hypothetical)",
+    "scenarioCategory": "HYPOTHETICAL",
+    "isActive": true,
+    "shockParameters": {
+      "equityShock": -15,
+      "bondShock": -8,
+      "creditSpreadChange": 120,
+      "volatilitySpike": 35,
+      "correlationShift": 0.60
+    },
+    "sectorShocks": {
+      "TECHNOLOGY": -18,
+      "FINANCIAL": -8,
+      "HEALTHCARE": -12,
+      "CONSUMER_DISCRETIONARY": -20,
+      "CONSUMER_STAPLES": -10,
+      "UTILITIES": -15,
+      "ENERGY": -12,
+      "REAL_ESTATE": -25,
+      "INDUSTRIALS": -15,
+      "MATERIALS": -14,
+      "TELECOMMUNICATIONS": -16
+    },
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "scenarioId": "SCN-006",
+    "scenarioName": "Stagflation",
+    "scenarioDescription": "High inflation combined with economic stagnation",
+    "scenarioCategory": "HYPOTHETICAL",
+    "isActive": true,
+    "shockParameters": {
+      "equityShock": -25,
+      "bondShock": -12,
+      "creditSpreadChange": 200,
+      "volatilitySpike": 50,
+      "correlationShift": 0.65
+    },
+    "sectorShocks": {
+      "TECHNOLOGY": -30,
+      "FINANCIAL": -28,
+      "HEALTHCARE": -18,
+      "CONSUMER_DISCRETIONARY": -35,
+      "CONSUMER_STAPLES": -12,
+      "UTILITIES": -15,
+      "ENERGY": 5,
+      "REAL_ESTATE": -20,
+      "INDUSTRIALS": -25,
+      "MATERIALS": -10,
+      "TELECOMMUNICATIONS": -22
+    },
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "scenarioId": "SCN-007",
+    "scenarioName": "Tech Sector Crash",
+    "scenarioDescription": "Severe correction focused on technology sector",
+    "scenarioCategory": "HYPOTHETICAL",
+    "isActive": true,
+    "shockParameters": {
+      "equityShock": -40,
+      "bondShock": 6,
+      "creditSpreadChange": 180,
+      "volatilitySpike": 60,
+      "correlationShift": 0.75
+    },
+    "sectorShocks": {
+      "TECHNOLOGY": -65,
+      "FINANCIAL": -20,
+      "HEALTHCARE": -15,
+      "CONSUMER_DISCRETIONARY": -25,
+      "CONSUMER_STAPLES": -8,
+      "UTILITIES": -5,
+      "ENERGY": -12,
+      "REAL_ESTATE": -18,
+      "INDUSTRIALS": -22,
+      "MATERIALS": -16,
+      "TELECOMMUNICATIONS": -35
+    },
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "scenarioId": "SCN-008",
+    "scenarioName": "Geopolitical Crisis",
+    "scenarioDescription": "Major geopolitical event causing market disruption",
+    "scenarioCategory": "HYPOTHETICAL",
+    "isActive": true,
+    "shockParameters": {
+      "equityShock": -20,
+      "bondShock": 4,
+      "creditSpreadChange": 160,
+      "volatilitySpike": 55,
+      "correlationShift": 0.70
+    },
+    "sectorShocks": {
+      "TECHNOLOGY": -22,
+      "FINANCIAL": -25,
+      "HEALTHCARE": -12,
+      "CONSUMER_DISCRETIONARY": -24,
+      "CONSUMER_STAPLES": -10,
+      "UTILITIES": -8,
+      "ENERGY": -15,
+      "REAL_ESTATE": -20,
+      "INDUSTRIALS": -26,
+      "MATERIALS": -23,
+      "TELECOMMUNICATIONS": -18
+    },
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "scenarioId": "SCN-009",
+    "scenarioName": "Mild Recession",
+    "scenarioDescription": "Regulatory scenario: mild economic recession",
+    "scenarioCategory": "REGULATORY",
+    "isActive": true,
+    "shockParameters": {
+      "equityShock": -20,
+      "bondShock": 5,
+      "creditSpreadChange": 140,
+      "volatilitySpike": 40,
+      "correlationShift": 0.65
+    },
+    "sectorShocks": {
+      "TECHNOLOGY": -22,
+      "FINANCIAL": -24,
+      "HEALTHCARE": -12,
+      "CONSUMER_DISCRETIONARY": -26,
+      "CONSUMER_STAPLES": -10,
+      "UTILITIES": -8,
+      "ENERGY": -18,
+      "REAL_ESTATE": -22,
+      "INDUSTRIALS": -23,
+      "MATERIALS": -20,
+      "TELECOMMUNICATIONS": -16
+    },
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "scenarioId": "SCN-010",
+    "scenarioName": "Severe Recession",
+    "scenarioDescription": "Regulatory scenario: severe economic recession",
+    "scenarioCategory": "REGULATORY",
+    "isActive": true,
+    "shockParameters": {
+      "equityShock": -40,
+      "bondShock": 10,
+      "creditSpreadChange": 320,
+      "volatilitySpike": 70,
+      "correlationShift": 0.82
+    },
+    "sectorShocks": {
+      "TECHNOLOGY": -45,
+      "FINANCIAL": -50,
+      "HEALTHCARE": -22,
+      "CONSUMER_DISCRETIONARY": -48,
+      "CONSUMER_STAPLES": -18,
+      "UTILITIES": -12,
+      "ENERGY": -38,
+      "REAL_ESTATE": -42,
+      "INDUSTRIALS": -44,
+      "MATERIALS": -40,
+      "TELECOMMUNICATIONS": -32
+    },
+    "createdAt": "2024-01-01T00:00:00Z"
+  }
+]
+

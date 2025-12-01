@@ -1,0 +1,212 @@
+{
+  "questionnaireType": "COMPREHENSIVE",
+  "totalQuestions": 15,
+  "estimatedTime": "5-10 minutes",
+  "maxScore": 75,
+  "categories": ["RISK_TOLERANCE", "TIME_HORIZON", "FINANCIAL_SITUATION", "INVESTMENT_KNOWLEDGE"],
+  "questions": [
+    {
+      "questionId": "Q1",
+      "questionNumber": 1,
+      "category": "RISK_TOLERANCE",
+      "questionText": "If your portfolio lost 20% of its value in a month, what would you most likely do?",
+      "options": [
+        { "optionId": "A", "text": "Sell everything to prevent further losses", "score": 1 },
+        { "optionId": "B", "text": "Sell some positions to reduce risk", "score": 2 },
+        { "optionId": "C", "text": "Hold and wait for recovery", "score": 3 },
+        { "optionId": "D", "text": "Buy more at lower prices", "score": 4 },
+        { "optionId": "E", "text": "Significantly increase positions", "score": 5 }
+      ]
+    },
+    {
+      "questionId": "Q2",
+      "questionNumber": 2,
+      "category": "RISK_TOLERANCE",
+      "questionText": "Which statement best describes your comfort with investment volatility?",
+      "options": [
+        { "optionId": "A", "text": "I cannot tolerate any loss of principal", "score": 1 },
+        { "optionId": "B", "text": "I can tolerate small fluctuations (up to 5%)", "score": 2 },
+        { "optionId": "C", "text": "I can tolerate moderate fluctuations (up to 15%)", "score": 3 },
+        { "optionId": "D", "text": "I can tolerate significant fluctuations (up to 25%)", "score": 4 },
+        { "optionId": "E", "text": "I can tolerate extreme fluctuations (more than 25%)", "score": 5 }
+      ]
+    },
+    {
+      "questionId": "Q3",
+      "questionNumber": 3,
+      "category": "RISK_TOLERANCE",
+      "questionText": "How would you describe your primary investment approach?",
+      "options": [
+        { "optionId": "A", "text": "Preserve capital at all costs", "score": 1 },
+        { "optionId": "B", "text": "Generate steady income with minimal risk", "score": 2 },
+        { "optionId": "C", "text": "Balance between growth and stability", "score": 3 },
+        { "optionId": "D", "text": "Maximize long-term growth accepting short-term volatility", "score": 4 },
+        { "optionId": "E", "text": "Pursue aggressive growth regardless of volatility", "score": 5 }
+      ]
+    },
+    {
+      "questionId": "Q4",
+      "questionNumber": 4,
+      "category": "RISK_TOLERANCE",
+      "questionText": "When you hear about a market correction, your first reaction is:",
+      "options": [
+        { "optionId": "A", "text": "Panic and consider selling immediately", "score": 1 },
+        { "optionId": "B", "text": "Worry and monitor closely", "score": 2 },
+        { "optionId": "C", "text": "Accept it as normal market behavior", "score": 3 },
+        { "optionId": "D", "text": "See it as a potential buying opportunity", "score": 4 },
+        { "optionId": "E", "text": "Get excited about discounted prices", "score": 5 }
+      ]
+    },
+    {
+      "questionId": "Q5",
+      "questionNumber": 5,
+      "category": "RISK_TOLERANCE",
+      "questionText": "What is the maximum annual loss you could accept without changing your strategy?",
+      "options": [
+        { "optionId": "A", "text": "0% - I cannot accept any loss", "score": 1 },
+        { "optionId": "B", "text": "Up to 5%", "score": 2 },
+        { "optionId": "C", "text": "Up to 15%", "score": 3 },
+        { "optionId": "D", "text": "Up to 25%", "score": 4 },
+        { "optionId": "E", "text": "More than 25%", "score": 5 }
+      ]
+    },
+    {
+      "questionId": "Q6",
+      "questionNumber": 6,
+      "category": "TIME_HORIZON",
+      "questionText": "When do you expect to need to withdraw a significant portion (>25%) of this investment?",
+      "options": [
+        { "optionId": "A", "text": "Within 1 year", "score": 1 },
+        { "optionId": "B", "text": "1-3 years", "score": 2 },
+        { "optionId": "C", "text": "3-7 years", "score": 3 },
+        { "optionId": "D", "text": "7-15 years", "score": 4 },
+        { "optionId": "E", "text": "More than 15 years", "score": 5 }
+      ]
+    },
+    {
+      "questionId": "Q7",
+      "questionNumber": 7,
+      "category": "TIME_HORIZON",
+      "questionText": "What is your primary investment goal?",
+      "options": [
+        { "optionId": "A", "text": "Emergency fund / near-term purchase", "score": 1 },
+        { "optionId": "B", "text": "Income generation for current expenses", "score": 2 },
+        { "optionId": "C", "text": "Major purchase in 5-10 years", "score": 3 },
+        { "optionId": "D", "text": "Retirement (10+ years away)", "score": 4 },
+        { "optionId": "E", "text": "Wealth building for next generation", "score": 5 }
+      ]
+    },
+    {
+      "questionId": "Q8",
+      "questionNumber": 8,
+      "category": "TIME_HORIZON",
+      "questionText": "How stable is your current income and employment?",
+      "options": [
+        { "optionId": "A", "text": "Very unstable / approaching retirement", "score": 1 },
+        { "optionId": "B", "text": "Somewhat unstable", "score": 2 },
+        { "optionId": "C", "text": "Moderately stable", "score": 3 },
+        { "optionId": "D", "text": "Stable with growth potential", "score": 4 },
+        { "optionId": "E", "text": "Very stable with high growth potential", "score": 5 }
+      ]
+    },
+    {
+      "questionId": "Q9",
+      "questionNumber": 9,
+      "category": "FINANCIAL_SITUATION",
+      "questionText": "What percentage of your total investable assets does this portfolio represent?",
+      "options": [
+        { "optionId": "A", "text": "More than 75%", "score": 1 },
+        { "optionId": "B", "text": "50-75%", "score": 2 },
+        { "optionId": "C", "text": "25-50%", "score": 3 },
+        { "optionId": "D", "text": "10-25%", "score": 4 },
+        { "optionId": "E", "text": "Less than 10%", "score": 5 }
+      ]
+    },
+    {
+      "questionId": "Q10",
+      "questionNumber": 10,
+      "category": "FINANCIAL_SITUATION",
+      "questionText": "How many months of expenses do you have in emergency savings (outside this portfolio)?",
+      "options": [
+        { "optionId": "A", "text": "Less than 1 month", "score": 1 },
+        { "optionId": "B", "text": "1-3 months", "score": 2 },
+        { "optionId": "C", "text": "3-6 months", "score": 3 },
+        { "optionId": "D", "text": "6-12 months", "score": 4 },
+        { "optionId": "E", "text": "More than 12 months", "score": 5 }
+      ]
+    },
+    {
+      "questionId": "Q11",
+      "questionNumber": 11,
+      "category": "FINANCIAL_SITUATION",
+      "questionText": "What is your current debt-to-income ratio?",
+      "options": [
+        { "optionId": "A", "text": "High (debt payments > 40% of income)", "score": 1 },
+        { "optionId": "B", "text": "Moderate-High (30-40%)", "score": 2 },
+        { "optionId": "C", "text": "Moderate (20-30%)", "score": 3 },
+        { "optionId": "D", "text": "Low (10-20%)", "score": 4 },
+        { "optionId": "E", "text": "Very low or no debt (<10%)", "score": 5 }
+      ]
+    },
+    {
+      "questionId": "Q12",
+      "questionNumber": 12,
+      "category": "FINANCIAL_SITUATION",
+      "questionText": "How dependent are you on investment income for living expenses?",
+      "options": [
+        { "optionId": "A", "text": "Completely dependent", "score": 1 },
+        { "optionId": "B", "text": "Heavily dependent (50%+)", "score": 2 },
+        { "optionId": "C", "text": "Partially dependent (25-50%)", "score": 3 },
+        { "optionId": "D", "text": "Slightly dependent (<25%)", "score": 4 },
+        { "optionId": "E", "text": "Not dependent at all", "score": 5 }
+      ]
+    },
+    {
+      "questionId": "Q13",
+      "questionNumber": 13,
+      "category": "INVESTMENT_KNOWLEDGE",
+      "questionText": "How would you rate your understanding of investment concepts (diversification, asset allocation, risk/return)?",
+      "options": [
+        { "optionId": "A", "text": "No understanding", "score": 1 },
+        { "optionId": "B", "text": "Basic understanding", "score": 2 },
+        { "optionId": "C", "text": "Moderate understanding", "score": 3 },
+        { "optionId": "D", "text": "Good understanding", "score": 4 },
+        { "optionId": "E", "text": "Expert understanding", "score": 5 }
+      ]
+    },
+    {
+      "questionId": "Q14",
+      "questionNumber": 14,
+      "category": "INVESTMENT_KNOWLEDGE",
+      "questionText": "How many years of investment experience do you have?",
+      "options": [
+        { "optionId": "A", "text": "None", "score": 1 },
+        { "optionId": "B", "text": "Less than 2 years", "score": 2 },
+        { "optionId": "C", "text": "2-5 years", "score": 3 },
+        { "optionId": "D", "text": "5-10 years", "score": 4 },
+        { "optionId": "E", "text": "More than 10 years", "score": 5 }
+      ]
+    },
+    {
+      "questionId": "Q15",
+      "questionNumber": 15,
+      "category": "INVESTMENT_KNOWLEDGE",
+      "questionText": "Which investment types have you owned? (Select highest complexity owned)",
+      "options": [
+        { "optionId": "A", "text": "Only savings accounts / CDs", "score": 1 },
+        { "optionId": "B", "text": "Mutual funds / ETFs", "score": 2 },
+        { "optionId": "C", "text": "Individual stocks and bonds", "score": 3 },
+        { "optionId": "D", "text": "Options, futures, or margin accounts", "score": 4 },
+        { "optionId": "E", "text": "Complex derivatives, private equity, or alternatives", "score": 5 }
+      ]
+    }
+  ],
+  "scoringGuide": {
+    "15-30": { "category": "CONSERVATIVE", "code": 1 },
+    "31-45": { "category": "MODERATELY_CONSERVATIVE", "code": 2 },
+    "46-55": { "category": "MODERATE", "code": 3 },
+    "56-65": { "category": "MODERATELY_AGGRESSIVE", "code": 4 },
+    "66-75": { "category": "AGGRESSIVE", "code": 5 }
+  }
+}
+

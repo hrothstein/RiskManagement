@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investors - Risk Management System</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1>🛡️ Risk Management System</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/investors.html" class="active">Investors</a></li>
+                <li><a href="/analyzer.html">Risk Analyzer</a></li>
+                <li><a href="/scenarios.html">Scenarios</a></li>
+                <li><a href="/api-docs" target="_blank">API Docs</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>👥 Investors</h2>
+            <p>Browse all investors and their risk profiles</p>
+        </div>
+
+        <div class="filters">
+            <input type="text" id="searchInput" placeholder="Search by name, email, or ID..." class="search-input">
+            <select id="filterExperience" class="filter-select">
+                <option value="">All Experience Levels</option>
+                <option value="NOVICE">Novice</option>
+                <option value="INTERMEDIATE">Intermediate</option>
+                <option value="EXPERIENCED">Experienced</option>
+                <option value="EXPERT">Expert</option>
+            </select>
+            <select id="filterHorizon" class="filter-select">
+                <option value="">All Horizons</option>
+                <option value="SHORT_TERM">Short Term</option>
+                <option value="MEDIUM_TERM">Medium Term</option>
+                <option value="LONG_TERM">Long Term</option>
+            </select>
+        </div>
+
+        <div class="investor-grid" id="investorGrid">
+            <div class="loading">Loading investors...</div>
+        </div>
+
+        <!-- Investor Detail Modal -->
+        <div id="investorModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="investorDetails"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Risk Management System | Version 1.0.0</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/investors.js"></script>
+</body>
+</html>
+

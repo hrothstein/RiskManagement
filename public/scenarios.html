@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stress Scenarios - Risk Management System</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1>🛡️ Risk Management System</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/investors.html">Investors</a></li>
+                <li><a href="/analyzer.html">Risk Analyzer</a></li>
+                <li><a href="/scenarios.html" class="active">Scenarios</a></li>
+                <li><a href="/api-docs" target="_blank">API Docs</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>📉 Stress Test Scenarios</h2>
+            <p>Explore market stress scenarios and their potential impact</p>
+        </div>
+
+        <div class="scenario-filters">
+            <button class="filter-btn active" data-filter="all">All Scenarios</button>
+            <button class="filter-btn" data-filter="HISTORICAL">Historical</button>
+            <button class="filter-btn" data-filter="HYPOTHETICAL">Hypothetical</button>
+            <button class="filter-btn" data-filter="REGULATORY">Regulatory</button>
+        </div>
+
+        <div class="scenario-grid" id="scenarioGrid">
+            <div class="loading">Loading scenarios...</div>
+        </div>
+
+        <!-- Scenario Detail Modal -->
+        <div id="scenarioModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="scenarioDetails"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Risk Management System | Version 1.0.0</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/scenarios.js"></script>
+</body>
+</html>
+

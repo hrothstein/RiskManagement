@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Analyzer - Risk Management System</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1>🛡️ Risk Management System</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/investors.html">Investors</a></li>
+                <li><a href="/analyzer.html" class="active">Risk Analyzer</a></li>
+                <li><a href="/scenarios.html">Scenarios</a></li>
+                <li><a href="/api-docs" target="_blank">API Docs</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>🔍 Portfolio Risk Analyzer</h2>
+            <p>Calculate comprehensive risk metrics for any portfolio</p>
+        </div>
+
+        <div class="analyzer-layout">
+            <div class="analyzer-form">
+                <h3>Portfolio Input</h3>
+                
+                <div class="form-group">
+                    <label for="investorSelect">Select Investor (Optional)</label>
+                    <select id="investorSelect" class="form-control">
+                        <option value="">-- None / Custom Portfolio --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="totalValue">Total Portfolio Value ($)</label>
+                    <input type="number" id="totalValue" class="form-control" value="500000" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Holdings</label>
+                    <div id="holdingsContainer">
+                        <!-- Holdings will be added here -->
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="addHolding()">+ Add Holding</button>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="includeStressTests">
+                        Include Stress Tests
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-primary" onclick="analyzePortfolio()">Analyze Portfolio</button>
+                    <button type="button" class="btn btn-secondary" onclick="loadSamplePortfolio()">Load Sample</button>
+                </div>
+            </div>
+
+            <div class="analyzer-results">
+                <h3>Analysis Results</h3>
+                <div id="resultsContainer" class="results-placeholder">
+                    <p>Enter portfolio details and click "Analyze Portfolio" to see results.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Risk Management System | Version 1.0.0</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/analyzer.js"></script>
+</body>
+</html>
+

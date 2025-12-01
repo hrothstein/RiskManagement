@@ -1,0 +1,123 @@
+[
+  {
+    "factorId": "FAC-001",
+    "factorName": "Market Risk",
+    "factorCode": "MARKET",
+    "factorCategory": "SYSTEMATIC",
+    "description": "Risk of losses due to overall market movements",
+    "defaultWeight": 0.35,
+    "benchmarkIndex": "SPY",
+    "currentLevel": 0.65,
+    "historicalAverage": 0.50,
+    "isActive": true
+  },
+  {
+    "factorId": "FAC-002",
+    "factorName": "Interest Rate Risk",
+    "factorCode": "INTEREST_RATE",
+    "factorCategory": "SYSTEMATIC",
+    "description": "Risk from changes in interest rates affecting fixed income and equity valuations",
+    "defaultWeight": 0.15,
+    "benchmarkIndex": "BND",
+    "currentLevel": 0.72,
+    "historicalAverage": 0.55,
+    "isActive": true
+  },
+  {
+    "factorId": "FAC-003",
+    "factorName": "Inflation Risk",
+    "factorCode": "INFLATION",
+    "factorCategory": "SYSTEMATIC",
+    "description": "Risk of purchasing power erosion due to inflation",
+    "defaultWeight": 0.10,
+    "benchmarkIndex": "TIP",
+    "currentLevel": 0.58,
+    "historicalAverage": 0.45,
+    "isActive": true
+  },
+  {
+    "factorId": "FAC-004",
+    "factorName": "Credit Risk",
+    "factorCode": "CREDIT",
+    "factorCategory": "SYSTEMATIC",
+    "description": "Risk of default or credit quality deterioration",
+    "defaultWeight": 0.12,
+    "benchmarkIndex": "LQD",
+    "currentLevel": 0.48,
+    "historicalAverage": 0.42,
+    "isActive": true
+  },
+  {
+    "factorId": "FAC-005",
+    "factorName": "Concentration Risk",
+    "factorCode": "CONCENTRATION",
+    "factorCategory": "UNSYSTEMATIC",
+    "description": "Risk from lack of diversification across positions or sectors",
+    "defaultWeight": 0.08,
+    "benchmarkIndex": null,
+    "currentLevel": 0.52,
+    "historicalAverage": 0.40,
+    "isActive": true
+  },
+  {
+    "factorId": "FAC-006",
+    "factorName": "Liquidity Risk",
+    "factorCode": "LIQUIDITY",
+    "factorCategory": "UNSYSTEMATIC",
+    "description": "Risk of inability to sell positions quickly without significant price impact",
+    "defaultWeight": 0.06,
+    "benchmarkIndex": null,
+    "currentLevel": 0.38,
+    "historicalAverage": 0.35,
+    "isActive": true
+  },
+  {
+    "factorId": "FAC-007",
+    "factorName": "Currency Risk",
+    "factorCode": "CURRENCY",
+    "factorCategory": "SYSTEMATIC",
+    "description": "Risk from foreign exchange rate fluctuations",
+    "defaultWeight": 0.05,
+    "benchmarkIndex": "DXY",
+    "currentLevel": 0.45,
+    "historicalAverage": 0.40,
+    "isActive": true
+  },
+  {
+    "factorId": "FAC-008",
+    "factorName": "Sector Risk",
+    "factorCode": "SECTOR",
+    "factorCategory": "UNSYSTEMATIC",
+    "description": "Risk from overexposure to specific economic sectors",
+    "defaultWeight": 0.04,
+    "benchmarkIndex": null,
+    "currentLevel": 0.55,
+    "historicalAverage": 0.42,
+    "isActive": true
+  },
+  {
+    "factorId": "FAC-009",
+    "factorName": "Volatility Risk",
+    "factorCode": "VOLATILITY",
+    "factorCategory": "SYSTEMATIC",
+    "description": "Risk from increased market volatility and price swings",
+    "defaultWeight": 0.03,
+    "benchmarkIndex": "VIX",
+    "currentLevel": 0.62,
+    "historicalAverage": 0.48,
+    "isActive": true
+  },
+  {
+    "factorId": "FAC-010",
+    "factorName": "Sequence Risk",
+    "factorCode": "SEQUENCE",
+    "factorCategory": "UNSYSTEMATIC",
+    "description": "Risk of unfavorable returns occurring early in retirement or withdrawal period",
+    "defaultWeight": 0.02,
+    "benchmarkIndex": null,
+    "currentLevel": 0.42,
+    "historicalAverage": 0.38,
+    "isActive": true
+  }
+]
+
