@@ -29,6 +29,19 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, {
   customfavIcon: '/favicon.ico'
 }));
 
+// OpenAPI Spec endpoints for download
+app.get('/openapi.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpecs);
+});
+
+app.get('/openapi.yaml', (req, res) => {
+  const yaml = require('js-yaml');
+  const yamlSpec = yaml.dump(swaggerSpecs, { lineWidth: -1 });
+  res.setHeader('Content-Type', 'text/yaml');
+  res.send(yamlSpec);
+});
+
 // Seed data on startup
 seedData();
 

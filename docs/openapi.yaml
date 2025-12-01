@@ -1,0 +1,227 @@
+openapi: 3.0.0
+info:
+  title: Risk Management System API
+  version: 1.0.0
+  description: A comprehensive Risk Management Backend System for portfolio risk assessment, scoring, and analysis capabilities for individual investors. Designed for integration with MuleSoft.
+  contact:
+    name: API Support
+    email: support@riskmanagement.demo
+  license:
+    name: ISC
+    url: https://opensource.org/licenses/ISC
+servers:
+  - url: /api/v1
+    description: Development server
+tags:
+  - name: Health
+    description: Health check endpoints
+  - name: Reference Data
+    description: Questionnaires, risk categories, factors, and benchmarks
+  - name: Investors
+    description: Investor management operations
+  - name: Assessments
+    description: Risk assessment questionnaires
+  - name: Profiles
+    description: Risk profile management
+  - name: Analysis
+    description: Core risk analysis and calculations
+  - name: Scenarios
+    description: Stress test scenario management
+  - name: Scores
+    description: Risk score tracking
+  - name: Recommendations
+    description: Investment recommendations
+components:
+  schemas:
+    Investor:
+      type: object
+      properties:
+        investorId:
+          type: string
+          example: INV-001
+        customerId:
+          type: string
+          example: CUST-001
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Smith
+        email:
+          type: string
+          example: john.smith@email.com
+        phone:
+          type: string
+          example: 555-0101
+        dateOfBirth:
+          type: string
+          format: date
+          example: '1975-03-15'
+        age:
+          type: integer
+          example: 49
+        employmentStatus:
+          type: string
+          enum:
+            - EMPLOYED
+            - SELF_EMPLOYED
+            - RETIRED
+            - UNEMPLOYED
+          example: EMPLOYED
+        annualIncome:
+          type: number
+          example: 150000
+        netWorth:
+          type: number
+          example: 850000
+        liquidNetWorth:
+          type: number
+          example: 450000
+        investmentExperience:
+          type: string
+          enum:
+            - NOVICE
+            - INTERMEDIATE
+            - EXPERIENCED
+            - EXPERT
+          example: EXPERIENCED
+        investmentHorizon:
+          type: string
+          enum:
+            - SHORT_TERM
+            - MEDIUM_TERM
+            - LONG_TERM
+          example: LONG_TERM
+    RiskProfile:
+      type: object
+      properties:
+        profileId:
+          type: string
+          example: PRF-001
+        investorId:
+          type: string
+          example: INV-001
+        riskCategory:
+          type: string
+          enum:
+            - CONSERVATIVE
+            - MODERATELY_CONSERVATIVE
+            - MODERATE
+            - MODERATELY_AGGRESSIVE
+            - AGGRESSIVE
+          example: MODERATE
+        riskCategoryCode:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 3
+        compositeRiskScore:
+          type: number
+          example: 65
+        riskToleranceScore:
+          type: number
+          example: 65
+        riskCapacityScore:
+          type: number
+          example: 72
+        recommendedAllocation:
+          type: object
+          properties:
+            equities:
+              type: number
+              example: 60
+            fixedIncome:
+              type: number
+              example: 30
+            alternatives:
+              type: number
+              example: 5
+            cash:
+              type: number
+              example: 5
+        maxDrawdownTolerance:
+          type: number
+          example: 25
+        maxVolatilityTolerance:
+          type: number
+          example: 18
+        maxConcentrationLimit:
+          type: number
+          example: 25
+    PortfolioRiskRequest:
+      type: object
+      required:
+        - portfolioData
+      properties:
+        investorId:
+          type: string
+          example: INV-001
+        portfolioData:
+          type: object
+          required:
+            - totalValue
+            - holdings
+          properties:
+            totalValue:
+              type: number
+              example: 485000
+            holdings:
+              type: array
+              items:
+                type: object
+                properties:
+                  symbol:
+                    type: string
+                    example: AAPL
+                  securityType:
+                    type: string
+                    example: STOCK
+                  sector:
+                    type: string
+                    example: TECHNOLOGY
+                  marketValue:
+                    type: number
+                    example: 35700
+                  weight:
+                    type: number
+                    example: 7.36
+                  beta:
+                    type: number
+                    example: 1.25
+                  annualizedVolatility:
+                    type: number
+                    example: 28.5
+        benchmarkSymbol:
+          type: string
+          example: SPY
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: NOT_FOUND
+            message:
+              type: string
+              example: Resource not found
+        timestamp:
+          type: string
+          format: date-time
+paths: {}
