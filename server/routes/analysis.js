@@ -13,8 +13,110 @@ const { runStressTest, runMultipleStressTests } = require('../services/stressTes
 const { generateRecommendations } = require('../services/recommendationService');
 
 /**
- * POST /api/v1/analysis/portfolio-risk
- * Calculate portfolio risk metrics
+ * @openapi
+ * /analysis/portfolio-risk:
+ *   post:
+ *     summary: Calculate portfolio risk metrics
+ *     description: Analyzes portfolio and calculates comprehensive risk metrics including VaR, Sharpe ratio, beta, and more
+ *     tags: [Analysis]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/PortfolioRiskRequest'
+ *           example:
+ *             investorId: INV-001
+ *             portfolioData:
+ *               totalValue: 485000
+ *               holdings:
+ *                 - symbol: AAPL
+ *                   securityType: STOCK
+ *                   sector: TECHNOLOGY
+ *                   marketValue: 35700
+ *                   weight: 7.36
+ *                   beta: 1.25
+ *                 - symbol: MSFT
+ *                   securityType: STOCK
+ *                   sector: TECHNOLOGY
+ *                   marketValue: 63000
+ *                   weight: 13.0
+ *                   beta: 1.15
+ *               cashPosition: 15000
+ *             benchmarkSymbol: SPY
+ *     responses:
+ *       200:
+ *         description: Portfolio risk analysis complete
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     investorId:
+ *                       type: string
+ *                     analysisDate:
+ *                       type: string
+ *                       format: date-time
+ *                     portfolioMetrics:
+ *                       type: object
+ *                       properties:
+ *                         totalValue:
+ *                           type: number
+ *                           example: 485000
+ *                         portfolioVolatility:
+ *                           type: number
+ *                           description: Annual standard deviation %
+ *                           example: 14.5
+ *                         portfolioBeta:
+ *                           type: number
+ *                           example: 1.12
+ *                         sharpeRatio:
+ *                           type: number
+ *                           example: 1.25
+ *                         sortinoRatio:
+ *                           type: number
+ *                           example: 1.45
+ *                         treynorRatio:
+ *                           type: number
+ *                           example: 0.08
+ *                         informationRatio:
+ *                           type: number
+ *                           example: 0.42
+ *                         maxDrawdown:
+ *                           type: number
+ *                           example: -18.5
+ *                         valueAtRisk:
+ *                           type: object
+ *                           properties:
+ *                             var95_percent:
+ *                               type: number
+ *                             var95_dollar:
+ *                               type: number
+ *                             var99_percent:
+ *                               type: number
+ *                             var99_dollar:
+ *                               type: number
+ *                         trackingError:
+ *                           type: number
+ *                           example: 3.2
+ *                         rSquared:
+ *                           type: number
+ *                           example: 0.89
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Invalid input - portfolioData with holdings is required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/portfolio-risk', (req, res) => {
   try {
@@ -56,8 +158,126 @@ router.post('/portfolio-risk', (req, res) => {
 });
 
 /**
- * POST /api/v1/analysis/concentration
- * Analyze concentration risk
+ * @openapi
+ * /analysis/concentration:
+ *   post:
+ *     summary: Analyze concentration risk
+ *     description: Analyzes portfolio concentration including single position, sector, and top-5 holdings risk
+ *     tags: [Analysis]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - holdings
+ *             properties:
+ *               investorId:
+ *                 type: string
+ *                 example: INV-001
+ *               holdings:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     symbol:
+ *                       type: string
+ *                     sector:
+ *                       type: string
+ *                     weight:
+ *                       type: number
+ *                 example:
+ *                   - symbol: AAPL
+ *                     sector: TECHNOLOGY
+ *                     weight: 22.5
+ *                   - symbol: MSFT
+ *                     sector: TECHNOLOGY
+ *                     weight: 18.2
+ *               thresholds:
+ *                 type: object
+ *                 properties:
+ *                   singlePositionLimit:
+ *                     type: number
+ *                     default: 10
+ *                   sectorLimit:
+ *                     type: number
+ *                     default: 25
+ *                   top5Limit:
+ *                     type: number
+ *                     default: 50
+ *     responses:
+ *       200:
+ *         description: Concentration analysis complete
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     concentrationAnalysis:
+ *                       type: object
+ *                       properties:
+ *                         singlePosition:
+ *                           type: object
+ *                           properties:
+ *                             topHolding:
+ *                               type: string
+ *                             topHoldingWeight:
+ *                               type: number
+ *                             limit:
+ *                               type: number
+ *                             status:
+ *                               type: string
+ *                               enum: [OK, BREACHED]
+ *                             breach:
+ *                               type: number
+ *                         sectorConcentration:
+ *                           type: object
+ *                           properties:
+ *                             topSector:
+ *                               type: string
+ *                             topSectorWeight:
+ *                               type: number
+ *                             status:
+ *                               type: string
+ *                             sectorBreakdown:
+ *                               type: object
+ *                         top5Concentration:
+ *                           type: object
+ *                         herfindahlIndex:
+ *                           type: number
+ *                           description: Concentration measure 0-1
+ *                         effectivePositions:
+ *                           type: number
+ *                         overallConcentrationRisk:
+ *                           type: string
+ *                           enum: [LOW, MODERATE, ELEVATED, HIGH]
+ *                     alerts:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           alertType:
+ *                             type: string
+ *                           severity:
+ *                             type: string
+ *                           message:
+ *                             type: string
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Holdings array is required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/concentration', (req, res) => {
   try {
@@ -94,8 +314,112 @@ router.post('/concentration', (req, res) => {
 });
 
 /**
- * POST /api/v1/analysis/suitability
- * Check portfolio suitability vs profile
+ * @openapi
+ * /analysis/suitability:
+ *   post:
+ *     summary: Check portfolio suitability vs profile
+ *     description: Compares portfolio characteristics against investor's risk profile to assess suitability
+ *     tags: [Analysis]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - investorId
+ *               - portfolioData
+ *             properties:
+ *               investorId:
+ *                 type: string
+ *                 example: INV-001
+ *               portfolioData:
+ *                 type: object
+ *                 properties:
+ *                   totalValue:
+ *                     type: number
+ *                   portfolioVolatility:
+ *                     type: number
+ *                   portfolioBeta:
+ *                     type: number
+ *                   maxDrawdown:
+ *                     type: number
+ *                   assetAllocation:
+ *                     type: object
+ *                     properties:
+ *                       equities:
+ *                         type: number
+ *                       fixedIncome:
+ *                         type: number
+ *                       alternatives:
+ *                         type: number
+ *                       cash:
+ *                         type: number
+ *                   topHoldingWeight:
+ *                     type: number
+ *                   sectorConcentration:
+ *                     type: object
+ *     responses:
+ *       200:
+ *         description: Suitability assessment complete
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     suitabilityAssessment:
+ *                       type: object
+ *                       properties:
+ *                         overallRating:
+ *                           type: string
+ *                           enum: [HIGHLY_SUITABLE, SUITABLE, SUITABLE_WITH_CAVEATS, REVIEW_REQUIRED, NOT_SUITABLE]
+ *                         overallScore:
+ *                           type: number
+ *                         recommendation:
+ *                           type: string
+ *                         dimensions:
+ *                           type: object
+ *                           properties:
+ *                             riskAlignment:
+ *                               type: object
+ *                             allocationAlignment:
+ *                               type: object
+ *                             concentrationCompliance:
+ *                               type: object
+ *                             timeHorizonFit:
+ *                               type: object
+ *                     riskProfile:
+ *                       type: object
+ *                       properties:
+ *                         profileId:
+ *                           type: string
+ *                         riskCategory:
+ *                           type: string
+ *                         maxVolatilityTolerance:
+ *                           type: number
+ *                         maxDrawdownTolerance:
+ *                           type: number
+ *                     actionRequired:
+ *                       type: boolean
+ *                     requiredActions:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: investorId and portfolioData are required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/suitability', (req, res) => {
   try {
@@ -143,8 +467,118 @@ router.post('/suitability', (req, res) => {
 });
 
 /**
- * POST /api/v1/analysis/stress-test
- * Run stress test scenario
+ * @openapi
+ * /analysis/stress-test:
+ *   post:
+ *     summary: Run stress test scenario
+ *     description: Applies stress test scenario(s) to a portfolio and calculates potential impact
+ *     tags: [Analysis]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - investorId
+ *               - portfolioData
+ *             properties:
+ *               investorId:
+ *                 type: string
+ *                 example: INV-001
+ *               scenarioId:
+ *                 type: string
+ *                 description: Single scenario ID
+ *                 example: SCN-001
+ *               scenarioIds:
+ *                 type: array
+ *                 description: Multiple scenario IDs (alternative to scenarioId)
+ *                 items:
+ *                   type: string
+ *                 example: ["SCN-001", "SCN-002", "SCN-005"]
+ *               portfolioData:
+ *                 type: object
+ *                 required:
+ *                   - totalValue
+ *                   - holdings
+ *                 properties:
+ *                   totalValue:
+ *                     type: number
+ *                   holdings:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         symbol:
+ *                           type: string
+ *                         sector:
+ *                           type: string
+ *                         marketValue:
+ *                           type: number
+ *                         weight:
+ *                           type: number
+ *     responses:
+ *       200:
+ *         description: Stress test complete
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     scenarioResults:
+ *                       type: object
+ *                       properties:
+ *                         scenarioId:
+ *                           type: string
+ *                         scenarioName:
+ *                           type: string
+ *                         portfolioImpact:
+ *                           type: object
+ *                           properties:
+ *                             currentValue:
+ *                               type: number
+ *                             stressedValue:
+ *                               type: number
+ *                             dollarLoss:
+ *                               type: number
+ *                             percentageLoss:
+ *                               type: number
+ *                             recoveryTime:
+ *                               type: string
+ *                         holdingImpacts:
+ *                           type: array
+ *                           items:
+ *                             type: object
+ *                         worstHit:
+ *                           type: array
+ *                         bestProtected:
+ *                           type: array
+ *                     riskProfileComparison:
+ *                       type: object
+ *                       properties:
+ *                         maxDrawdownTolerance:
+ *                           type: number
+ *                         scenarioDrawdown:
+ *                           type: number
+ *                         exceedsToleranceBy:
+ *                           type: number
+ *                         warning:
+ *                           type: string
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/stress-test', (req, res) => {
   try {
@@ -198,8 +632,119 @@ router.post('/stress-test', (req, res) => {
 });
 
 /**
- * POST /api/v1/analysis/comprehensive
- * Full risk analysis (all metrics)
+ * @openapi
+ * /analysis/comprehensive:
+ *   post:
+ *     summary: Full risk analysis (all metrics)
+ *     description: Performs comprehensive risk analysis including portfolio risk, concentration, suitability, optional stress tests, and generates recommendations
+ *     tags: [Analysis]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - investorId
+ *               - portfolioData
+ *             properties:
+ *               investorId:
+ *                 type: string
+ *                 example: INV-001
+ *               portfolioData:
+ *                 type: object
+ *                 required:
+ *                   - totalValue
+ *                   - holdings
+ *                 properties:
+ *                   totalValue:
+ *                     type: number
+ *                   holdings:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                   cashPosition:
+ *                     type: number
+ *                   assetAllocation:
+ *                     type: object
+ *               includeStressTests:
+ *                 type: boolean
+ *                 default: false
+ *               scenarioIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["SCN-001", "SCN-002", "SCN-005"]
+ *               benchmarkSymbol:
+ *                 type: string
+ *                 default: SPY
+ *     responses:
+ *       200:
+ *         description: Comprehensive analysis complete
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     investorId:
+ *                       type: string
+ *                     analysisTimestamp:
+ *                       type: string
+ *                       format: date-time
+ *                     portfolioRisk:
+ *                       type: object
+ *                       description: Full portfolio risk metrics
+ *                     concentrationAnalysis:
+ *                       type: object
+ *                       description: Full concentration analysis
+ *                     suitabilityAssessment:
+ *                       type: object
+ *                       description: Full suitability assessment
+ *                     stressTestResults:
+ *                       type: array
+ *                       description: Array of stress test results (if requested)
+ *                       nullable: true
+ *                     recommendations:
+ *                       type: object
+ *                       description: Generated recommendations
+ *                     executiveSummary:
+ *                       type: object
+ *                       properties:
+ *                         overallRiskLevel:
+ *                           type: string
+ *                           enum: [LOW, MODERATE, MODERATE_HIGH, HIGH]
+ *                         keyFindings:
+ *                           type: array
+ *                           items:
+ *                             type: string
+ *                         priorityActions:
+ *                           type: array
+ *                           items:
+ *                             type: string
+ *                         nextReviewDate:
+ *                           type: string
+ *                           format: date
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: investorId and portfolioData are required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Investor not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/comprehensive', (req, res) => {
   try {
@@ -367,4 +912,3 @@ router.post('/comprehensive', (req, res) => {
 });
 
 module.exports = router;
-

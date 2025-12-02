@@ -8,8 +8,56 @@ const { getAll, getById, getWhere, add, generateId } = require('../datastore');
 const { scoreAssessment, generateProfile } = require('../services/scoringEngine');
 
 /**
- * GET /api/v1/assessments
- * List all assessments
+ * @openapi
+ * /assessments:
+ *   get:
+ *     summary: List all assessments
+ *     description: Returns all risk assessments across all investors
+ *     tags: [Assessments]
+ *     responses:
+ *       200:
+ *         description: List of all assessments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     assessments:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           assessmentId:
+ *                             type: string
+ *                             example: ASM-001
+ *                           investorId:
+ *                             type: string
+ *                             example: INV-001
+ *                           assessmentDate:
+ *                             type: string
+ *                             format: date-time
+ *                           assessmentType:
+ *                             type: string
+ *                             enum: [COMPREHENSIVE, QUICK, ANNUAL_REVIEW]
+ *                           status:
+ *                             type: string
+ *                             enum: [PENDING, IN_PROGRESS, COMPLETED]
+ *                           rawScore:
+ *                             type: integer
+ *                           percentileScore:
+ *                             type: number
+ *                     count:
+ *                       type: integer
+ *                       example: 50
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
  */
 router.get('/', (req, res) => {
   const assessments = getAll('riskAssessments');
@@ -25,8 +73,77 @@ router.get('/', (req, res) => {
 });
 
 /**
- * GET /api/v1/assessments/:assessmentId
- * Get assessment by ID
+ * @openapi
+ * /assessments/{assessmentId}:
+ *   get:
+ *     summary: Get assessment by ID
+ *     description: Returns a single assessment with all question responses
+ *     tags: [Assessments]
+ *     parameters:
+ *       - in: path
+ *         name: assessmentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The assessment ID
+ *         example: ASM-001
+ *     responses:
+ *       200:
+ *         description: Assessment found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     assessmentId:
+ *                       type: string
+ *                     investorId:
+ *                       type: string
+ *                     assessmentDate:
+ *                       type: string
+ *                       format: date-time
+ *                     assessmentType:
+ *                       type: string
+ *                     status:
+ *                       type: string
+ *                     responses:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           questionId:
+ *                             type: string
+ *                           questionCategory:
+ *                             type: string
+ *                           questionText:
+ *                             type: string
+ *                           selectedOption:
+ *                             type: string
+ *                           optionText:
+ *                             type: string
+ *                           score:
+ *                             type: integer
+ *                     rawScore:
+ *                       type: integer
+ *                     maxPossibleScore:
+ *                       type: integer
+ *                     percentileScore:
+ *                       type: number
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       404:
+ *         description: Assessment not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/:assessmentId', (req, res) => {
   const assessment = getById('riskAssessments', 'assessmentId', req.params.assessmentId);
@@ -50,8 +167,43 @@ router.get('/:assessmentId', (req, res) => {
 });
 
 /**
- * GET /api/v1/investors/:investorId/assessments
- * Get assessments for investor
+ * @openapi
+ * /assessments/investor/{investorId}/assessments:
+ *   get:
+ *     summary: Get assessments for investor
+ *     description: Returns all assessments for a specific investor
+ *     tags: [Assessments]
+ *     parameters:
+ *       - in: path
+ *         name: investorId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The investor ID
+ *         example: INV-001
+ *     responses:
+ *       200:
+ *         description: Assessments retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     assessments:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     count:
+ *                       type: integer
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
  */
 router.get('/investor/:investorId/assessments', (req, res) => {
   const assessments = getWhere('riskAssessments', a => a.investorId === req.params.investorId);
@@ -67,8 +219,108 @@ router.get('/investor/:investorId/assessments', (req, res) => {
 });
 
 /**
- * POST /api/v1/assessments
- * Create/submit new assessment
+ * @openapi
+ * /assessments:
+ *   post:
+ *     summary: Submit new assessment
+ *     description: Creates and scores a new risk assessment, automatically generating a risk profile
+ *     tags: [Assessments]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - investorId
+ *               - responses
+ *             properties:
+ *               investorId:
+ *                 type: string
+ *                 description: The investor ID
+ *                 example: INV-001
+ *               assessmentType:
+ *                 type: string
+ *                 enum: [COMPREHENSIVE, QUICK, ANNUAL_REVIEW]
+ *                 default: COMPREHENSIVE
+ *               responses:
+ *                 type: array
+ *                 description: Array of question responses
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - questionId
+ *                     - selectedOption
+ *                   properties:
+ *                     questionId:
+ *                       type: string
+ *                       example: Q1
+ *                     selectedOption:
+ *                       type: string
+ *                       example: C
+ *           example:
+ *             investorId: INV-001
+ *             assessmentType: COMPREHENSIVE
+ *             responses:
+ *               - questionId: Q1
+ *                 selectedOption: C
+ *               - questionId: Q2
+ *                 selectedOption: D
+ *               - questionId: Q3
+ *                 selectedOption: B
+ *     responses:
+ *       201:
+ *         description: Assessment created and scored successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     assessmentId:
+ *                       type: string
+ *                       example: ASM-051
+ *                     status:
+ *                       type: string
+ *                       example: COMPLETED
+ *                     rawScore:
+ *                       type: integer
+ *                       example: 68
+ *                     percentileScore:
+ *                       type: number
+ *                       example: 68
+ *                     riskProfile:
+ *                       type: object
+ *                       properties:
+ *                         profileId:
+ *                           type: string
+ *                           example: PRF-051
+ *                         riskCategory:
+ *                           type: string
+ *                           example: MODERATELY_AGGRESSIVE
+ *                         compositeRiskScore:
+ *                           type: number
+ *                           example: 65
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Investor not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/', (req, res) => {
   const { investorId, assessmentType, responses } = req.body;
@@ -147,4 +399,3 @@ router.post('/', (req, res) => {
 });
 
 module.exports = router;
-

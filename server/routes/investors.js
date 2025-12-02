@@ -7,8 +7,36 @@ const router = express.Router();
 const { getAll, getById, getWhere, add, update, remove, generateId } = require('../datastore');
 
 /**
- * GET /api/v1/investors
- * List all investors
+ * @openapi
+ * /investors:
+ *   get:
+ *     summary: List all investors
+ *     description: Returns all 50 investors with their demographic and financial information
+ *     tags: [Investors]
+ *     responses:
+ *       200:
+ *         description: List of all investors
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     investors:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Investor'
+ *                     count:
+ *                       type: integer
+ *                       example: 50
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
  */
 router.get('/', (req, res) => {
   const investors = getAll('investors');
@@ -24,8 +52,42 @@ router.get('/', (req, res) => {
 });
 
 /**
- * GET /api/v1/investors/:investorId
- * Get investor by ID
+ * @openapi
+ * /investors/{investorId}:
+ *   get:
+ *     summary: Get investor by ID
+ *     description: Returns a single investor by their investor ID
+ *     tags: [Investors]
+ *     parameters:
+ *       - in: path
+ *         name: investorId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The investor ID (e.g., INV-001)
+ *         example: INV-001
+ *     responses:
+ *       200:
+ *         description: Investor found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Investor'
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       404:
+ *         description: Investor not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/:investorId', (req, res) => {
   const investor = getById('investors', 'investorId', req.params.investorId);
@@ -49,8 +111,77 @@ router.get('/:investorId', (req, res) => {
 });
 
 /**
- * GET /api/v1/investors/:investorId/profile
- * Get investor with active risk profile
+ * @openapi
+ * /investors/{investorId}/profile:
+ *   get:
+ *     summary: Get investor with active risk profile
+ *     description: Returns investor details along with their current active risk profile
+ *     tags: [Investors]
+ *     parameters:
+ *       - in: path
+ *         name: investorId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The investor ID
+ *         example: INV-001
+ *     responses:
+ *       200:
+ *         description: Investor with profile found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     investor:
+ *                       $ref: '#/components/schemas/Investor'
+ *                     riskProfile:
+ *                       type: object
+ *                       properties:
+ *                         profileId:
+ *                           type: string
+ *                           example: PRF-001
+ *                         riskCategory:
+ *                           type: string
+ *                           example: MODERATE
+ *                         compositeRiskScore:
+ *                           type: number
+ *                           example: 65
+ *                         recommendedAllocation:
+ *                           type: object
+ *                           properties:
+ *                             equities:
+ *                               type: integer
+ *                             fixedIncome:
+ *                               type: integer
+ *                             alternatives:
+ *                               type: integer
+ *                             cash:
+ *                               type: integer
+ *                         maxDrawdownTolerance:
+ *                           type: number
+ *                           example: 25
+ *                         maxVolatilityTolerance:
+ *                           type: number
+ *                           example: 18
+ *                         lastAssessmentDate:
+ *                           type: string
+ *                           format: date-time
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       404:
+ *         description: Investor not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/:investorId/profile', (req, res) => {
   const investor = getById('investors', 'investorId', req.params.investorId);
@@ -91,8 +222,42 @@ router.get('/:investorId/profile', (req, res) => {
 });
 
 /**
- * GET /api/v1/investors/customer/:customerId
- * Get investor by customer ID
+ * @openapi
+ * /investors/customer/{customerId}:
+ *   get:
+ *     summary: Get investor by customer ID
+ *     description: Returns investor by their external customer ID reference (from banking core system)
+ *     tags: [Investors]
+ *     parameters:
+ *       - in: path
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The customer ID from banking core system
+ *         example: CUST-001
+ *     responses:
+ *       200:
+ *         description: Investor found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Investor'
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       404:
+ *         description: Investor not found for customer ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/customer/:customerId', (req, res) => {
   const investor = getWhere('investors', i => i.customerId === req.params.customerId)[0];
@@ -116,8 +281,77 @@ router.get('/customer/:customerId', (req, res) => {
 });
 
 /**
- * POST /api/v1/investors
- * Create new investor
+ * @openapi
+ * /investors:
+ *   post:
+ *     summary: Create new investor
+ *     description: Creates a new investor record
+ *     tags: [Investors]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - customerId
+ *               - firstName
+ *               - lastName
+ *               - email
+ *             properties:
+ *               customerId:
+ *                 type: string
+ *                 example: CUST-051
+ *               firstName:
+ *                 type: string
+ *                 example: Jane
+ *               lastName:
+ *                 type: string
+ *                 example: Doe
+ *               email:
+ *                 type: string
+ *                 example: jane.doe@email.com
+ *               phone:
+ *                 type: string
+ *                 example: 555-0151
+ *               dateOfBirth:
+ *                 type: string
+ *                 format: date
+ *                 example: 1985-06-15
+ *               employmentStatus:
+ *                 type: string
+ *                 enum: [EMPLOYED, SELF_EMPLOYED, RETIRED, UNEMPLOYED]
+ *               annualIncome:
+ *                 type: number
+ *                 example: 120000
+ *               netWorth:
+ *                 type: number
+ *                 example: 500000
+ *               liquidNetWorth:
+ *                 type: number
+ *                 example: 250000
+ *               investmentExperience:
+ *                 type: string
+ *                 enum: [NOVICE, INTERMEDIATE, EXPERIENCED, EXPERT]
+ *               investmentHorizon:
+ *                 type: string
+ *                 enum: [SHORT_TERM, MEDIUM_TERM, LONG_TERM]
+ *     responses:
+ *       201:
+ *         description: Investor created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Investor'
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
  */
 router.post('/', (req, res) => {
   const now = new Date().toISOString();
@@ -139,8 +373,72 @@ router.post('/', (req, res) => {
 });
 
 /**
- * PUT /api/v1/investors/:investorId
- * Update investor
+ * @openapi
+ * /investors/{investorId}:
+ *   put:
+ *     summary: Update investor
+ *     description: Updates an existing investor's information
+ *     tags: [Investors]
+ *     parameters:
+ *       - in: path
+ *         name: investorId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The investor ID
+ *         example: INV-001
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               employmentStatus:
+ *                 type: string
+ *                 enum: [EMPLOYED, SELF_EMPLOYED, RETIRED, UNEMPLOYED]
+ *               annualIncome:
+ *                 type: number
+ *               netWorth:
+ *                 type: number
+ *               liquidNetWorth:
+ *                 type: number
+ *               investmentExperience:
+ *                 type: string
+ *                 enum: [NOVICE, INTERMEDIATE, EXPERIENCED, EXPERT]
+ *               investmentHorizon:
+ *                 type: string
+ *                 enum: [SHORT_TERM, MEDIUM_TERM, LONG_TERM]
+ *     responses:
+ *       200:
+ *         description: Investor updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Investor'
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       404:
+ *         description: Investor not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.put('/:investorId', (req, res) => {
   const updated = update('investors', 'investorId', req.params.investorId, req.body);
@@ -164,8 +462,46 @@ router.put('/:investorId', (req, res) => {
 });
 
 /**
- * DELETE /api/v1/investors/:investorId
- * Delete investor
+ * @openapi
+ * /investors/{investorId}:
+ *   delete:
+ *     summary: Delete investor
+ *     description: Deletes an investor record
+ *     tags: [Investors]
+ *     parameters:
+ *       - in: path
+ *         name: investorId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The investor ID
+ *         example: INV-001
+ *     responses:
+ *       200:
+ *         description: Investor deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                       example: Investor deleted successfully
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       404:
+ *         description: Investor not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.delete('/:investorId', (req, res) => {
   const deleted = remove('investors', 'investorId', req.params.investorId);
@@ -189,4 +525,3 @@ router.delete('/:investorId', (req, res) => {
 });
 
 module.exports = router;
-

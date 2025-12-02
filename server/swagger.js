@@ -3,6 +3,32 @@
  */
 
 const swaggerJsdoc = require('swagger-jsdoc');
+const path = require('path');
+
+// Determine the base URL based on environment
+const getServers = () => {
+  const servers = [];
+  
+  // Production Heroku URL
+  servers.push({
+    url: 'https://risk-management-system-f04b786dc797.herokuapp.com/api/v1',
+    description: 'Production server (Heroku)'
+  });
+  
+  // Local development
+  servers.push({
+    url: 'http://localhost:3002/api/v1',
+    description: 'Local development server'
+  });
+  
+  // Relative URL (works when accessed from same origin)
+  servers.push({
+    url: '/api/v1',
+    description: 'Relative URL (same origin)'
+  });
+  
+  return servers;
+};
 
 const options = {
   definition: {
@@ -10,7 +36,26 @@ const options = {
     info: {
       title: 'Risk Management System API',
       version: '1.0.0',
-      description: 'A comprehensive Risk Management Backend System for portfolio risk assessment, scoring, and analysis capabilities for individual investors. Designed for integration with MuleSoft.',
+      description: `A comprehensive Risk Management Backend System for portfolio risk assessment, scoring, and analysis capabilities for individual investors. Designed for integration with MuleSoft.
+
+## Overview
+This API provides:
+- **Risk Tolerance Assessment** - 15-question questionnaire processing and scoring
+- **Portfolio Risk Analysis** - VaR, Sharpe Ratio, Beta, Standard Deviation calculations
+- **Concentration Risk Detection** - Single position, sector, and top-5 holdings analysis
+- **Stress Testing** - Scenario analysis with historical and hypothetical scenarios
+- **Investment Suitability** - Portfolio vs risk profile alignment checks
+- **Recommendations** - Generated investment recommendations
+
+## Authentication
+This is a demo API with **no authentication required**.
+
+## Base URLs
+- **Production:** https://risk-management-system-f04b786dc797.herokuapp.com/api/v1
+- **Local:** http://localhost:3002/api/v1
+
+## Data Note
+This system uses an **in-memory datastore** that resets when the server restarts. It comes pre-loaded with 50 sample investors.`,
       contact: {
         name: 'API Support',
         email: 'support@riskmanagement.demo'
@@ -20,12 +65,7 @@ const options = {
         url: 'https://opensource.org/licenses/ISC'
       }
     },
-    servers: [
-      {
-        url: process.env.API_BASE_URL || '/api/v1',
-        description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server'
-      }
-    ],
+    servers: getServers(),
     tags: [
       { name: 'Health', description: 'Health check endpoints' },
       { name: 'Reference Data', description: 'Questionnaires, risk categories, factors, and benchmarks' },
@@ -153,10 +193,9 @@ const options = {
       }
     }
   },
-  apis: ['./server/routes/*.js']
+  apis: [path.join(__dirname, 'routes', '*.js')]
 };
 
 const specs = swaggerJsdoc(options);
 
 module.exports = specs;
-

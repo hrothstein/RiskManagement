@@ -10,8 +10,67 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * GET /api/v1/questionnaire
- * Get risk assessment questionnaire
+ * @openapi
+ * /questionnaire:
+ *   get:
+ *     summary: Get risk assessment questionnaire
+ *     description: Returns the complete 15-question risk assessment questionnaire with scoring guide
+ *     tags: [Reference Data]
+ *     responses:
+ *       200:
+ *         description: Questionnaire retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     questionnaireType:
+ *                       type: string
+ *                       example: COMPREHENSIVE
+ *                     totalQuestions:
+ *                       type: integer
+ *                       example: 15
+ *                     estimatedTime:
+ *                       type: string
+ *                       example: 5-10 minutes
+ *                     categories:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example: ["RISK_TOLERANCE", "TIME_HORIZON", "FINANCIAL_SITUATION", "INVESTMENT_KNOWLEDGE"]
+ *                     questions:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           questionId:
+ *                             type: string
+ *                           questionNumber:
+ *                             type: integer
+ *                           category:
+ *                             type: string
+ *                           questionText:
+ *                             type: string
+ *                           options:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 optionId:
+ *                                   type: string
+ *                                 text:
+ *                                   type: string
+ *                                 score:
+ *                                   type: integer
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
  */
 router.get('/questionnaire', (req, res) => {
   const questionnaire = JSON.parse(
@@ -26,8 +85,33 @@ router.get('/questionnaire', (req, res) => {
 });
 
 /**
- * GET /api/v1/questionnaire/:type
- * Get questionnaire by type
+ * @openapi
+ * /questionnaire/{type}:
+ *   get:
+ *     summary: Get questionnaire by type
+ *     description: Returns questionnaire for specified type (currently only COMPREHENSIVE is available)
+ *     tags: [Reference Data]
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [COMPREHENSIVE]
+ *         description: Type of questionnaire
+ *     responses:
+ *       200:
+ *         description: Questionnaire retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       404:
+ *         description: Questionnaire type not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/questionnaire/:type', (req, res) => {
   const questionnaire = JSON.parse(
@@ -54,8 +138,66 @@ router.get('/questionnaire/:type', (req, res) => {
 });
 
 /**
- * GET /api/v1/risk-factors
- * Get all risk factors
+ * @openapi
+ * /risk-factors:
+ *   get:
+ *     summary: Get all risk factors
+ *     description: Returns all risk factor definitions with weights and current levels
+ *     tags: [Reference Data]
+ *     responses:
+ *       200:
+ *         description: Risk factors retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     factors:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           factorId:
+ *                             type: string
+ *                             example: FAC-001
+ *                           factorName:
+ *                             type: string
+ *                             example: Market Risk
+ *                           factorCode:
+ *                             type: string
+ *                             example: MARKET
+ *                           factorCategory:
+ *                             type: string
+ *                             enum: [SYSTEMATIC, UNSYSTEMATIC]
+ *                             example: SYSTEMATIC
+ *                           description:
+ *                             type: string
+ *                           defaultWeight:
+ *                             type: number
+ *                             example: 0.35
+ *                           benchmarkIndex:
+ *                             type: string
+ *                             example: SPY
+ *                           currentLevel:
+ *                             type: number
+ *                             example: 0.65
+ *                           historicalAverage:
+ *                             type: number
+ *                             example: 0.50
+ *                           isActive:
+ *                             type: boolean
+ *                     count:
+ *                       type: integer
+ *                       example: 10
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
  */
 router.get('/risk-factors', (req, res) => {
   const factors = getAll('riskFactors');
@@ -71,8 +213,66 @@ router.get('/risk-factors', (req, res) => {
 });
 
 /**
- * GET /api/v1/benchmarks
- * Get all benchmarks
+ * @openapi
+ * /benchmarks:
+ *   get:
+ *     summary: Get all benchmarks
+ *     description: Returns all market benchmarks for performance comparison
+ *     tags: [Reference Data]
+ *     responses:
+ *       200:
+ *         description: Benchmarks retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     benchmarks:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           benchmarkId:
+ *                             type: string
+ *                             example: BM-001
+ *                           benchmarkName:
+ *                             type: string
+ *                             example: S&P 500 Total Return
+ *                           benchmarkSymbol:
+ *                             type: string
+ *                             example: SPY
+ *                           benchmarkType:
+ *                             type: string
+ *                             enum: [EQUITY, FIXED_INCOME, BALANCED, COMMODITY]
+ *                             example: EQUITY
+ *                           annualizedReturn:
+ *                             type: number
+ *                             example: 10.5
+ *                           annualizedVolatility:
+ *                             type: number
+ *                             example: 15.2
+ *                           sharpeRatio:
+ *                             type: number
+ *                             example: 0.69
+ *                           maxDrawdown:
+ *                             type: number
+ *                             example: -33.8
+ *                           isDefault:
+ *                             type: boolean
+ *                           isActive:
+ *                             type: boolean
+ *                     count:
+ *                       type: integer
+ *                       example: 5
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
  */
 router.get('/benchmarks', (req, res) => {
   const benchmarks = getAll('benchmarks');
@@ -88,8 +288,71 @@ router.get('/benchmarks', (req, res) => {
 });
 
 /**
- * GET /api/v1/risk-categories
- * Get risk category definitions
+ * @openapi
+ * /risk-categories:
+ *   get:
+ *     summary: Get risk category definitions
+ *     description: Returns all five risk categories with typical allocations and volatility ranges
+ *     tags: [Reference Data]
+ *     responses:
+ *       200:
+ *         description: Risk categories retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     categories:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           code:
+ *                             type: integer
+ *                             example: 3
+ *                           name:
+ *                             type: string
+ *                             enum: [CONSERVATIVE, MODERATELY_CONSERVATIVE, MODERATE, MODERATELY_AGGRESSIVE, AGGRESSIVE]
+ *                             example: MODERATE
+ *                           description:
+ *                             type: string
+ *                             example: Balanced approach between growth and stability
+ *                           scoreRange:
+ *                             type: object
+ *                             properties:
+ *                               min:
+ *                                 type: integer
+ *                               max:
+ *                                 type: integer
+ *                           typicalAllocation:
+ *                             type: object
+ *                             properties:
+ *                               equities:
+ *                                 type: integer
+ *                               fixedIncome:
+ *                                 type: integer
+ *                               alternatives:
+ *                                 type: integer
+ *                               cash:
+ *                                 type: integer
+ *                           typicalVolatility:
+ *                             type: object
+ *                             properties:
+ *                               min:
+ *                                 type: integer
+ *                               max:
+ *                                 type: integer
+ *                           maxDrawdownTolerance:
+ *                             type: integer
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
  */
 router.get('/risk-categories', (req, res) => {
   const categories = [
@@ -173,4 +436,3 @@ router.get('/risk-categories', (req, res) => {
 });
 
 module.exports = router;
-

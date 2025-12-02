@@ -7,8 +7,55 @@ const router = express.Router();
 const { getAll, getById, getWhere, add, generateId } = require('../datastore');
 
 /**
- * GET /api/v1/scores
- * List all risk scores
+ * @openapi
+ * /scores:
+ *   get:
+ *     summary: List all risk scores
+ *     description: Returns all point-in-time risk score snapshots
+ *     tags: [Scores]
+ *     responses:
+ *       200:
+ *         description: List of all risk scores
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     scores:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           scoreId:
+ *                             type: string
+ *                             example: SCR-001
+ *                           investorId:
+ *                             type: string
+ *                           profileId:
+ *                             type: string
+ *                           scoreDate:
+ *                             type: string
+ *                             format: date-time
+ *                           scoreType:
+ *                             type: string
+ *                             enum: [PORTFOLIO_RISK, CONCENTRATION, SUITABILITY]
+ *                           portfolioMetrics:
+ *                             type: object
+ *                           concentrationMetrics:
+ *                             type: object
+ *                           profileAlignment:
+ *                             type: object
+ *                     count:
+ *                       type: integer
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
  */
 router.get('/', (req, res) => {
   const scores = getAll('riskScores');
@@ -24,8 +71,60 @@ router.get('/', (req, res) => {
 });
 
 /**
- * GET /api/v1/scores/:scoreId
- * Get score by ID
+ * @openapi
+ * /scores/{scoreId}:
+ *   get:
+ *     summary: Get score by ID
+ *     description: Returns a single risk score snapshot
+ *     tags: [Scores]
+ *     parameters:
+ *       - in: path
+ *         name: scoreId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The score ID
+ *         example: SCR-001
+ *     responses:
+ *       200:
+ *         description: Score found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     scoreId:
+ *                       type: string
+ *                     investorId:
+ *                       type: string
+ *                     profileId:
+ *                       type: string
+ *                     scoreDate:
+ *                       type: string
+ *                       format: date-time
+ *                     scoreType:
+ *                       type: string
+ *                     portfolioMetrics:
+ *                       type: object
+ *                     concentrationMetrics:
+ *                       type: object
+ *                     profileAlignment:
+ *                       type: object
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       404:
+ *         description: Risk score not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/:scoreId', (req, res) => {
   const score = getById('riskScores', 'scoreId', req.params.scoreId);
@@ -49,8 +148,43 @@ router.get('/:scoreId', (req, res) => {
 });
 
 /**
- * GET /api/v1/investors/:investorId/scores
- * Get all scores for investor
+ * @openapi
+ * /scores/investor/{investorId}/scores:
+ *   get:
+ *     summary: Get all scores for investor
+ *     description: Returns all historical risk scores for a specific investor
+ *     tags: [Scores]
+ *     parameters:
+ *       - in: path
+ *         name: investorId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The investor ID
+ *         example: INV-001
+ *     responses:
+ *       200:
+ *         description: Scores retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     scores:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     count:
+ *                       type: integer
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
  */
 router.get('/investor/:investorId/scores', (req, res) => {
   const scores = getWhere('riskScores', s => s.investorId === req.params.investorId);
@@ -66,8 +200,52 @@ router.get('/investor/:investorId/scores', (req, res) => {
 });
 
 /**
- * GET /api/v1/investors/:investorId/scores/latest
- * Get latest score for investor
+ * @openapi
+ * /scores/investor/{investorId}/scores/latest:
+ *   get:
+ *     summary: Get latest score for investor
+ *     description: Returns the most recent risk score for an investor
+ *     tags: [Scores]
+ *     parameters:
+ *       - in: path
+ *         name: investorId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The investor ID
+ *         example: INV-001
+ *     responses:
+ *       200:
+ *         description: Latest score found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     scoreId:
+ *                       type: string
+ *                     investorId:
+ *                       type: string
+ *                     scoreDate:
+ *                       type: string
+ *                       format: date-time
+ *                     portfolioMetrics:
+ *                       type: object
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       404:
+ *         description: No risk scores found for investor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/investor/:investorId/scores/latest', (req, res) => {
   const scores = getWhere('riskScores', s => s.investorId === req.params.investorId);
@@ -96,8 +274,75 @@ router.get('/investor/:investorId/scores/latest', (req, res) => {
 });
 
 /**
- * POST /api/v1/scores
- * Create risk score (from analysis)
+ * @openapi
+ * /scores:
+ *   post:
+ *     summary: Create risk score
+ *     description: Creates a new risk score snapshot (typically from analysis results)
+ *     tags: [Scores]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - investorId
+ *               - scoreType
+ *             properties:
+ *               investorId:
+ *                 type: string
+ *                 example: INV-001
+ *               profileId:
+ *                 type: string
+ *                 example: PRF-001
+ *               scoreType:
+ *                 type: string
+ *                 enum: [PORTFOLIO_RISK, CONCENTRATION, SUITABILITY]
+ *                 example: PORTFOLIO_RISK
+ *               portfolioMetrics:
+ *                 type: object
+ *                 properties:
+ *                   totalValue:
+ *                     type: number
+ *                   volatility:
+ *                     type: number
+ *                   beta:
+ *                     type: number
+ *                   sharpeRatio:
+ *                     type: number
+ *                   valueAtRisk95:
+ *                     type: number
+ *               concentrationMetrics:
+ *                 type: object
+ *               profileAlignment:
+ *                 type: object
+ *     responses:
+ *       201:
+ *         description: Score created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     scoreId:
+ *                       type: string
+ *                     scoreDate:
+ *                       type: string
+ *                       format: date-time
+ *                     investorId:
+ *                       type: string
+ *                     scoreType:
+ *                       type: string
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
  */
 router.post('/', (req, res) => {
   const now = new Date().toISOString();
@@ -119,4 +364,3 @@ router.post('/', (req, res) => {
 });
 
 module.exports = router;
-
