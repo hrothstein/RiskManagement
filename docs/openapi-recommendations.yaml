@@ -1,0 +1,355 @@
+openapi: 3.0.0
+info:
+  title: Recommendations API
+  version: 1.0.0
+  description: |-
+    Investment recommendations for the Risk Management System.
+    
+    This API provides:
+    - Retrieve investment recommendations for investors
+    - Update recommendation status (acknowledge, implement, dismiss)
+    - Get active recommendations that need attention
+
+    ## Recommendation Categories
+    - **REBALANCING** - Portfolio rebalancing suggestions
+    - **DIVERSIFICATION** - Diversification improvements
+    - **RISK_REDUCTION** - Risk mitigation actions
+    - **INCOME** - Income-generating opportunities
+
+    ## Recommendation Statuses
+    - **ACTIVE** - New recommendation requiring attention
+    - **ACKNOWLEDGED** - Client has seen the recommendation
+    - **IMPLEMENTED** - Recommendation has been acted upon
+    - **DISMISSED** - Recommendation was rejected/ignored
+
+    ## Authentication
+    This is a demo API with **no authentication required**.
+
+    ## Data Note
+    This system uses an **in-memory datastore** that resets when the server restarts.
+  contact:
+    name: API Support
+    email: support@riskmanagement.demo
+  license:
+    name: ISC
+    url: https://opensource.org/licenses/ISC
+servers:
+  - url: https://risk-management-system-f04b786dc797.herokuapp.com/api/v1
+    description: Production server (Heroku)
+  - url: http://localhost:3002/api/v1
+    description: Local development server
+tags:
+  - name: Recommendations
+    description: Investment recommendations
+components:
+  schemas:
+    Recommendation:
+      type: object
+      properties:
+        recommendationId:
+          type: string
+          example: REC-001
+        investorId:
+          type: string
+          example: INV-001
+        profileId:
+          type: string
+          example: PRF-001
+        generatedDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - ACKNOWLEDGED
+            - IMPLEMENTED
+            - DISMISSED
+        overallAssessment:
+          type: object
+          properties:
+            suitabilityScore:
+              type: number
+            suitabilityRating:
+              type: string
+              enum:
+                - HIGHLY_SUITABLE
+                - SUITABLE
+                - SUITABLE_WITH_CAVEATS
+                - REVIEW_REQUIRED
+                - NOT_SUITABLE
+            summary:
+              type: string
+        recommendations:
+          type: array
+          items:
+            type: object
+            properties:
+              recommendationId:
+                type: string
+              category:
+                type: string
+                enum:
+                  - REBALANCING
+                  - DIVERSIFICATION
+                  - RISK_REDUCTION
+                  - INCOME
+              priority:
+                type: string
+                enum:
+                  - HIGH
+                  - MEDIUM
+                  - LOW
+              title:
+                type: string
+              description:
+                type: string
+              currentValue:
+                type: number
+              targetValue:
+                type: number
+        nextReviewDate:
+          type: string
+          format: date
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: NOT_FOUND
+            message:
+              type: string
+              example: Resource not found
+        timestamp:
+          type: string
+          format: date-time
+paths:
+  /recommendations:
+    get:
+      summary: List all recommendations
+      description: Returns all investment recommendations across all investors
+      tags:
+        - Recommendations
+      responses:
+        '200':
+          description: List of all recommendations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      recommendations:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Recommendation'
+                      count:
+                        type: integer
+                  timestamp:
+                    type: string
+                    format: date-time
+  /recommendations/{recommendationId}:
+    get:
+      summary: Get recommendation by ID
+      description: Returns a single recommendation with all details
+      tags:
+        - Recommendations
+      parameters:
+        - in: path
+          name: recommendationId
+          required: true
+          schema:
+            type: string
+          description: The recommendation ID
+          example: REC-001
+      responses:
+        '200':
+          description: Recommendation found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Recommendation'
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Recommendation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /recommendations/investor/{investorId}/recommendations:
+    get:
+      summary: Get recommendations for investor
+      description: Returns all recommendations for a specific investor
+      tags:
+        - Recommendations
+      parameters:
+        - in: path
+          name: investorId
+          required: true
+          schema:
+            type: string
+          description: The investor ID
+          example: INV-001
+      responses:
+        '200':
+          description: Recommendations retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      recommendations:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Recommendation'
+                      count:
+                        type: integer
+                  timestamp:
+                    type: string
+                    format: date-time
+  /recommendations/investor/{investorId}/recommendations/active:
+    get:
+      summary: Get active recommendations for investor
+      description: Returns only active (non-dismissed, non-implemented) recommendations for an investor
+      tags:
+        - Recommendations
+      parameters:
+        - in: path
+          name: investorId
+          required: true
+          schema:
+            type: string
+          description: The investor ID
+          example: INV-001
+      responses:
+        '200':
+          description: Active recommendations retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      recommendations:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Recommendation'
+                      count:
+                        type: integer
+                  timestamp:
+                    type: string
+                    format: date-time
+  /recommendations/{recommendationId}/status:
+    put:
+      summary: Update recommendation status
+      description: Updates the status of a recommendation (acknowledge, implement, dismiss)
+      tags:
+        - Recommendations
+      parameters:
+        - in: path
+          name: recommendationId
+          required: true
+          schema:
+            type: string
+          description: The recommendation ID
+          example: REC-001
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - ACTIVE
+                    - ACKNOWLEDGED
+                    - IMPLEMENTED
+                    - DISMISSED
+                  example: ACKNOWLEDGED
+                notes:
+                  type: string
+                  example: Client acknowledged during quarterly review
+            example:
+              status: ACKNOWLEDGED
+              notes: Client acknowledged during quarterly review
+      responses:
+        '200':
+          description: Status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      recommendationId:
+                        type: string
+                      status:
+                        type: string
+                      notes:
+                        type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+        '400':
+          description: Status is required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Recommendation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+

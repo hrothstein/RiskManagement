@@ -1,0 +1,421 @@
+openapi: 3.0.0
+info:
+  title: Reference Data API
+  version: 1.0.0
+  description: |-
+    Reference data and configuration for the Risk Management System.
+    
+    This API provides:
+    - Risk assessment questionnaire with scoring
+    - Risk factor definitions and weights
+    - Market benchmarks for comparison
+    - Risk category definitions
+    - Health check endpoint
+
+    ## Authentication
+    This is a demo API with **no authentication required**.
+
+    ## Data Note
+    This system uses an **in-memory datastore** that resets when the server restarts.
+  contact:
+    name: API Support
+    email: support@riskmanagement.demo
+  license:
+    name: ISC
+    url: https://opensource.org/licenses/ISC
+servers:
+  - url: https://risk-management-system-f04b786dc797.herokuapp.com/api/v1
+    description: Production server (Heroku)
+  - url: http://localhost:3002/api/v1
+    description: Local development server
+tags:
+  - name: Health
+    description: Health check endpoints
+  - name: Reference Data
+    description: Questionnaires, risk categories, factors, and benchmarks
+components:
+  schemas:
+    Question:
+      type: object
+      properties:
+        questionId:
+          type: string
+          example: Q1
+        questionNumber:
+          type: integer
+          example: 1
+        category:
+          type: string
+          example: RISK_TOLERANCE
+        questionText:
+          type: string
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              optionId:
+                type: string
+              text:
+                type: string
+              score:
+                type: integer
+    RiskFactor:
+      type: object
+      properties:
+        factorId:
+          type: string
+          example: FAC-001
+        factorName:
+          type: string
+          example: Market Risk
+        factorCode:
+          type: string
+          example: MARKET
+        factorCategory:
+          type: string
+          enum:
+            - SYSTEMATIC
+            - UNSYSTEMATIC
+        description:
+          type: string
+        defaultWeight:
+          type: number
+          example: 0.35
+        benchmarkIndex:
+          type: string
+          example: SPY
+        currentLevel:
+          type: number
+          example: 0.65
+        historicalAverage:
+          type: number
+          example: 0.5
+        isActive:
+          type: boolean
+    Benchmark:
+      type: object
+      properties:
+        benchmarkId:
+          type: string
+          example: BM-001
+        benchmarkName:
+          type: string
+          example: S&P 500 Total Return
+        benchmarkSymbol:
+          type: string
+          example: SPY
+        benchmarkType:
+          type: string
+          enum:
+            - EQUITY
+            - FIXED_INCOME
+            - BALANCED
+            - COMMODITY
+        annualizedReturn:
+          type: number
+          example: 10.5
+        annualizedVolatility:
+          type: number
+          example: 15.2
+        sharpeRatio:
+          type: number
+          example: 0.69
+        maxDrawdown:
+          type: number
+          example: -33.8
+        isDefault:
+          type: boolean
+        isActive:
+          type: boolean
+    RiskCategory:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 3
+        name:
+          type: string
+          enum:
+            - CONSERVATIVE
+            - MODERATELY_CONSERVATIVE
+            - MODERATE
+            - MODERATELY_AGGRESSIVE
+            - AGGRESSIVE
+        description:
+          type: string
+        scoreRange:
+          type: object
+          properties:
+            min:
+              type: integer
+            max:
+              type: integer
+        typicalAllocation:
+          type: object
+          properties:
+            equities:
+              type: integer
+            fixedIncome:
+              type: integer
+            alternatives:
+              type: integer
+            cash:
+              type: integer
+        typicalVolatility:
+          type: object
+          properties:
+            min:
+              type: integer
+            max:
+              type: integer
+        maxDrawdownTolerance:
+          type: integer
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: NOT_FOUND
+            message:
+              type: string
+              example: Resource not found
+        timestamp:
+          type: string
+          format: date-time
+paths:
+  /health:
+    get:
+      summary: System health check
+      description: Returns the health status of the Risk Management System including datastore statistics
+      tags:
+        - Health
+      responses:
+        '200':
+          description: System is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: healthy
+                      service:
+                        type: string
+                        example: risk-management-system
+                      version:
+                        type: string
+                        example: 1.0.0
+                      uptime:
+                        type: integer
+                        description: Server uptime in seconds
+                        example: 3600
+                      datastore:
+                        type: object
+                        properties:
+                          investors:
+                            type: integer
+                            example: 50
+                          profiles:
+                            type: integer
+                            example: 50
+                          assessments:
+                            type: integer
+                            example: 50
+                          scenarios:
+                            type: integer
+                            example: 10
+                          riskFactors:
+                            type: integer
+                            example: 10
+                          benchmarks:
+                            type: integer
+                            example: 5
+                  timestamp:
+                    type: string
+                    format: date-time
+  /questionnaire:
+    get:
+      summary: Get risk assessment questionnaire
+      description: Returns the complete 15-question risk assessment questionnaire with scoring guide
+      tags:
+        - Reference Data
+      responses:
+        '200':
+          description: Questionnaire retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      questionnaireType:
+                        type: string
+                        example: COMPREHENSIVE
+                      totalQuestions:
+                        type: integer
+                        example: 15
+                      estimatedTime:
+                        type: string
+                        example: 5-10 minutes
+                      categories:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - RISK_TOLERANCE
+                          - TIME_HORIZON
+                          - FINANCIAL_SITUATION
+                          - INVESTMENT_KNOWLEDGE
+                      questions:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Question'
+                  timestamp:
+                    type: string
+                    format: date-time
+  /questionnaire/{type}:
+    get:
+      summary: Get questionnaire by type
+      description: Returns questionnaire for specified type (currently only COMPREHENSIVE is available)
+      tags:
+        - Reference Data
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema:
+            type: string
+            enum:
+              - COMPREHENSIVE
+          description: Type of questionnaire
+      responses:
+        '200':
+          description: Questionnaire retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          description: Questionnaire type not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /risk-factors:
+    get:
+      summary: Get all risk factors
+      description: Returns all risk factor definitions with weights and current levels
+      tags:
+        - Reference Data
+      responses:
+        '200':
+          description: Risk factors retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      factors:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/RiskFactor'
+                      count:
+                        type: integer
+                        example: 10
+                  timestamp:
+                    type: string
+                    format: date-time
+  /benchmarks:
+    get:
+      summary: Get all benchmarks
+      description: Returns all market benchmarks for performance comparison
+      tags:
+        - Reference Data
+      responses:
+        '200':
+          description: Benchmarks retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      benchmarks:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Benchmark'
+                      count:
+                        type: integer
+                        example: 5
+                  timestamp:
+                    type: string
+                    format: date-time
+  /risk-categories:
+    get:
+      summary: Get risk category definitions
+      description: Returns all five risk categories with typical allocations and volatility ranges
+      tags:
+        - Reference Data
+      responses:
+        '200':
+          description: Risk categories retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      categories:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/RiskCategory'
+                  timestamp:
+                    type: string
+                    format: date-time
+

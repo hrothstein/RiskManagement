@@ -1,0 +1,335 @@
+openapi: 3.0.0
+info:
+  title: Assessments API
+  version: 1.0.0
+  description: |-
+    Risk assessment questionnaire operations for the Risk Management System.
+    
+    This API provides:
+    - Submit and score risk tolerance assessments
+    - Retrieve assessment history for investors
+    - Automatic risk profile generation from assessment scores
+
+    ## Authentication
+    This is a demo API with **no authentication required**.
+
+    ## Data Note
+    This system uses an **in-memory datastore** that resets when the server restarts.
+  contact:
+    name: API Support
+    email: support@riskmanagement.demo
+  license:
+    name: ISC
+    url: https://opensource.org/licenses/ISC
+servers:
+  - url: https://risk-management-system-f04b786dc797.herokuapp.com/api/v1
+    description: Production server (Heroku)
+  - url: http://localhost:3002/api/v1
+    description: Local development server
+tags:
+  - name: Assessments
+    description: Risk assessment questionnaires
+components:
+  schemas:
+    Assessment:
+      type: object
+      properties:
+        assessmentId:
+          type: string
+          example: ASM-001
+        investorId:
+          type: string
+          example: INV-001
+        assessmentDate:
+          type: string
+          format: date-time
+        assessmentType:
+          type: string
+          enum:
+            - COMPREHENSIVE
+            - QUICK
+            - ANNUAL_REVIEW
+        status:
+          type: string
+          enum:
+            - PENDING
+            - IN_PROGRESS
+            - COMPLETED
+        rawScore:
+          type: integer
+          example: 68
+        percentileScore:
+          type: number
+          example: 68
+    AssessmentResponse:
+      type: object
+      properties:
+        questionId:
+          type: string
+          example: Q1
+        selectedOption:
+          type: string
+          example: C
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: NOT_FOUND
+            message:
+              type: string
+              example: Resource not found
+        timestamp:
+          type: string
+          format: date-time
+paths:
+  /assessments:
+    get:
+      summary: List all assessments
+      description: Returns all risk assessments across all investors
+      tags:
+        - Assessments
+      responses:
+        '200':
+          description: List of all assessments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      assessments:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Assessment'
+                      count:
+                        type: integer
+                        example: 50
+                  timestamp:
+                    type: string
+                    format: date-time
+    post:
+      summary: Submit new assessment
+      description: Creates and scores a new risk assessment, automatically generating a risk profile
+      tags:
+        - Assessments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - investorId
+                - responses
+              properties:
+                investorId:
+                  type: string
+                  description: The investor ID
+                  example: INV-001
+                assessmentType:
+                  type: string
+                  enum:
+                    - COMPREHENSIVE
+                    - QUICK
+                    - ANNUAL_REVIEW
+                  default: COMPREHENSIVE
+                responses:
+                  type: array
+                  description: Array of question responses
+                  items:
+                    $ref: '#/components/schemas/AssessmentResponse'
+            example:
+              investorId: INV-001
+              assessmentType: COMPREHENSIVE
+              responses:
+                - questionId: Q1
+                  selectedOption: C
+                - questionId: Q2
+                  selectedOption: D
+                - questionId: Q3
+                  selectedOption: B
+      responses:
+        '201':
+          description: Assessment created and scored successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      assessmentId:
+                        type: string
+                        example: ASM-051
+                      status:
+                        type: string
+                        example: COMPLETED
+                      rawScore:
+                        type: integer
+                        example: 68
+                      percentileScore:
+                        type: number
+                        example: 68
+                      riskProfile:
+                        type: object
+                        properties:
+                          profileId:
+                            type: string
+                            example: PRF-051
+                          riskCategory:
+                            type: string
+                            example: MODERATELY_AGGRESSIVE
+                          compositeRiskScore:
+                            type: number
+                            example: 65
+                  timestamp:
+                    type: string
+                    format: date-time
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Investor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /assessments/{assessmentId}:
+    get:
+      summary: Get assessment by ID
+      description: Returns a single assessment with all question responses
+      tags:
+        - Assessments
+      parameters:
+        - in: path
+          name: assessmentId
+          required: true
+          schema:
+            type: string
+          description: The assessment ID
+          example: ASM-001
+      responses:
+        '200':
+          description: Assessment found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      assessmentId:
+                        type: string
+                      investorId:
+                        type: string
+                      assessmentDate:
+                        type: string
+                        format: date-time
+                      assessmentType:
+                        type: string
+                      status:
+                        type: string
+                      responses:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            questionId:
+                              type: string
+                            questionCategory:
+                              type: string
+                            questionText:
+                              type: string
+                            selectedOption:
+                              type: string
+                            optionText:
+                              type: string
+                            score:
+                              type: integer
+                      rawScore:
+                        type: integer
+                      maxPossibleScore:
+                        type: integer
+                      percentileScore:
+                        type: number
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Assessment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /assessments/investor/{investorId}/assessments:
+    get:
+      summary: Get assessments for investor
+      description: Returns all assessments for a specific investor
+      tags:
+        - Assessments
+      parameters:
+        - in: path
+          name: investorId
+          required: true
+          schema:
+            type: string
+          description: The investor ID
+          example: INV-001
+      responses:
+        '200':
+          description: Assessments retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      assessments:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Assessment'
+                      count:
+                        type: integer
+                  timestamp:
+                    type: string
+                    format: date-time
+

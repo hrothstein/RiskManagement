@@ -1,0 +1,390 @@
+openapi: 3.0.0
+info:
+  title: Scenarios API
+  version: 1.0.0
+  description: |-
+    Stress test scenario management for the Risk Management System.
+    
+    This API provides:
+    - CRUD operations for stress test scenarios
+    - Pre-defined historical scenarios (2008 Financial Crisis, COVID-19, etc.)
+    - Custom hypothetical scenario creation
+    - Regulatory stress test scenarios
+
+    ## Scenario Categories
+    - **HISTORICAL** - Based on past market events
+    - **HYPOTHETICAL** - Custom what-if scenarios
+    - **REGULATORY** - Required regulatory stress tests
+
+    ## Authentication
+    This is a demo API with **no authentication required**.
+
+    ## Data Note
+    This system uses an **in-memory datastore** that resets when the server restarts.
+  contact:
+    name: API Support
+    email: support@riskmanagement.demo
+  license:
+    name: ISC
+    url: https://opensource.org/licenses/ISC
+servers:
+  - url: https://risk-management-system-f04b786dc797.herokuapp.com/api/v1
+    description: Production server (Heroku)
+  - url: http://localhost:3002/api/v1
+    description: Local development server
+tags:
+  - name: Scenarios
+    description: Stress test scenario management
+components:
+  schemas:
+    Scenario:
+      type: object
+      properties:
+        scenarioId:
+          type: string
+          example: SCN-001
+        scenarioName:
+          type: string
+          example: 2008 Financial Crisis
+        scenarioDescription:
+          type: string
+        scenarioCategory:
+          type: string
+          enum:
+            - HISTORICAL
+            - HYPOTHETICAL
+            - REGULATORY
+        isActive:
+          type: boolean
+        shockParameters:
+          type: object
+          properties:
+            equityShock:
+              type: number
+              example: -50
+            bondShock:
+              type: number
+              example: 10
+            creditSpreadChange:
+              type: number
+              example: 400
+            volatilitySpike:
+              type: number
+              example: 80
+        sectorShocks:
+          type: object
+          example:
+            TECHNOLOGY: -55
+            FINANCIAL: -70
+            HEALTHCARE: -35
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: NOT_FOUND
+            message:
+              type: string
+              example: Resource not found
+        timestamp:
+          type: string
+          format: date-time
+paths:
+  /scenarios:
+    get:
+      summary: List all scenarios
+      description: Returns all stress test scenarios (historical, hypothetical, and regulatory)
+      tags:
+        - Scenarios
+      responses:
+        '200':
+          description: List of all scenarios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      scenarios:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Scenario'
+                      count:
+                        type: integer
+                        example: 10
+                  timestamp:
+                    type: string
+                    format: date-time
+    post:
+      summary: Create custom scenario
+      description: Creates a new stress test scenario
+      tags:
+        - Scenarios
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - scenarioName
+                - scenarioCategory
+                - shockParameters
+              properties:
+                scenarioName:
+                  type: string
+                  example: Custom Recession Scenario
+                scenarioDescription:
+                  type: string
+                  example: A custom stress scenario for testing
+                scenarioCategory:
+                  type: string
+                  enum:
+                    - HISTORICAL
+                    - HYPOTHETICAL
+                    - REGULATORY
+                  example: HYPOTHETICAL
+                isActive:
+                  type: boolean
+                  default: true
+                shockParameters:
+                  type: object
+                  properties:
+                    equityShock:
+                      type: number
+                      example: -30
+                    bondShock:
+                      type: number
+                      example: 5
+                    creditSpreadChange:
+                      type: number
+                      example: 200
+                    volatilitySpike:
+                      type: number
+                      example: 50
+                sectorShocks:
+                  type: object
+                  example:
+                    TECHNOLOGY: -35
+                    FINANCIAL: -40
+                    HEALTHCARE: -20
+      responses:
+        '201':
+          description: Scenario created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      scenarioId:
+                        type: string
+                      scenarioName:
+                        type: string
+                      scenarioCategory:
+                        type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+  /scenarios/{scenarioId}:
+    get:
+      summary: Get scenario by ID
+      description: Returns a single stress test scenario with all parameters
+      tags:
+        - Scenarios
+      parameters:
+        - in: path
+          name: scenarioId
+          required: true
+          schema:
+            type: string
+          description: The scenario ID
+          example: SCN-001
+      responses:
+        '200':
+          description: Scenario found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Scenario'
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Scenario not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      summary: Update scenario
+      description: Updates an existing stress test scenario
+      tags:
+        - Scenarios
+      parameters:
+        - in: path
+          name: scenarioId
+          required: true
+          schema:
+            type: string
+          description: The scenario ID
+          example: SCN-001
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scenarioName:
+                  type: string
+                scenarioDescription:
+                  type: string
+                scenarioCategory:
+                  type: string
+                  enum:
+                    - HISTORICAL
+                    - HYPOTHETICAL
+                    - REGULATORY
+                isActive:
+                  type: boolean
+                shockParameters:
+                  type: object
+                sectorShocks:
+                  type: object
+      responses:
+        '200':
+          description: Scenario updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Scenario'
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Scenario not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete scenario
+      description: Deletes a stress test scenario
+      tags:
+        - Scenarios
+      parameters:
+        - in: path
+          name: scenarioId
+          required: true
+          schema:
+            type: string
+          description: The scenario ID
+          example: SCN-001
+      responses:
+        '200':
+          description: Scenario deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Scenario deleted successfully
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Scenario not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /scenarios/category/{category}:
+    get:
+      summary: Get scenarios by category
+      description: Returns all scenarios of a specific category
+      tags:
+        - Scenarios
+      parameters:
+        - in: path
+          name: category
+          required: true
+          schema:
+            type: string
+            enum:
+              - HISTORICAL
+              - HYPOTHETICAL
+              - REGULATORY
+          description: The scenario category
+          example: HISTORICAL
+      responses:
+        '200':
+          description: Scenarios retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      scenarios:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Scenario'
+                      count:
+                        type: integer
+                  timestamp:
+                    type: string
+                    format: date-time
+

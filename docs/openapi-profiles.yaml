@@ -1,0 +1,439 @@
+openapi: 3.0.0
+info:
+  title: Profiles API
+  version: 1.0.0
+  description: |-
+    Risk profile management for the Risk Management System.
+    
+    This API provides:
+    - CRUD operations for risk profiles
+    - Retrieve active profile for an investor
+    - Get profile history for an investor
+    - Admin override to manually set profiles
+
+    ## Risk Categories
+    - CONSERVATIVE (Score 0-20)
+    - MODERATELY_CONSERVATIVE (Score 21-40)
+    - MODERATE (Score 41-60)
+    - MODERATELY_AGGRESSIVE (Score 61-80)
+    - AGGRESSIVE (Score 81-100)
+
+    ## Authentication
+    This is a demo API with **no authentication required**.
+
+    ## Data Note
+    This system uses an **in-memory datastore** that resets when the server restarts.
+  contact:
+    name: API Support
+    email: support@riskmanagement.demo
+  license:
+    name: ISC
+    url: https://opensource.org/licenses/ISC
+servers:
+  - url: https://risk-management-system-f04b786dc797.herokuapp.com/api/v1
+    description: Production server (Heroku)
+  - url: http://localhost:3002/api/v1
+    description: Local development server
+tags:
+  - name: Profiles
+    description: Risk profile management
+components:
+  schemas:
+    RiskProfile:
+      type: object
+      properties:
+        profileId:
+          type: string
+          example: PRF-001
+        investorId:
+          type: string
+          example: INV-001
+        riskCategory:
+          type: string
+          enum:
+            - CONSERVATIVE
+            - MODERATELY_CONSERVATIVE
+            - MODERATE
+            - MODERATELY_AGGRESSIVE
+            - AGGRESSIVE
+          example: MODERATE
+        riskCategoryCode:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 3
+        compositeRiskScore:
+          type: number
+          example: 65
+        riskToleranceScore:
+          type: number
+          example: 65
+        riskCapacityScore:
+          type: number
+          example: 72
+        recommendedAllocation:
+          type: object
+          properties:
+            equities:
+              type: number
+              example: 60
+            fixedIncome:
+              type: number
+              example: 30
+            alternatives:
+              type: number
+              example: 5
+            cash:
+              type: number
+              example: 5
+        maxDrawdownTolerance:
+          type: number
+          example: 25
+        maxVolatilityTolerance:
+          type: number
+          example: 18
+        maxConcentrationLimit:
+          type: number
+          example: 25
+        isActive:
+          type: boolean
+          example: true
+        validFrom:
+          type: string
+          format: date-time
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: NOT_FOUND
+            message:
+              type: string
+              example: Resource not found
+        timestamp:
+          type: string
+          format: date-time
+paths:
+  /profiles:
+    get:
+      summary: List all risk profiles
+      description: Returns all risk profiles across all investors
+      tags:
+        - Profiles
+      responses:
+        '200':
+          description: List of all risk profiles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      profiles:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/RiskProfile'
+                      count:
+                        type: integer
+                        example: 50
+                  timestamp:
+                    type: string
+                    format: date-time
+    post:
+      summary: Create profile (admin override)
+      description: Manually creates a risk profile without going through assessment
+      tags:
+        - Profiles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - investorId
+                - riskCategory
+              properties:
+                investorId:
+                  type: string
+                  example: INV-001
+                riskCategory:
+                  type: string
+                  enum:
+                    - CONSERVATIVE
+                    - MODERATELY_CONSERVATIVE
+                    - MODERATE
+                    - MODERATELY_AGGRESSIVE
+                    - AGGRESSIVE
+                compositeRiskScore:
+                  type: number
+                recommendedAllocation:
+                  type: object
+                maxDrawdownTolerance:
+                  type: number
+                maxVolatilityTolerance:
+                  type: number
+                maxConcentrationLimit:
+                  type: number
+                isActive:
+                  type: boolean
+                  default: true
+      responses:
+        '201':
+          description: Profile created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/RiskProfile'
+                  timestamp:
+                    type: string
+                    format: date-time
+  /profiles/{profileId}:
+    get:
+      summary: Get profile by ID
+      description: Returns a single risk profile by its ID
+      tags:
+        - Profiles
+      parameters:
+        - in: path
+          name: profileId
+          required: true
+          schema:
+            type: string
+          description: The profile ID
+          example: PRF-001
+      responses:
+        '200':
+          description: Profile found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/RiskProfile'
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Risk profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      summary: Update profile
+      description: Updates an existing risk profile
+      tags:
+        - Profiles
+      parameters:
+        - in: path
+          name: profileId
+          required: true
+          schema:
+            type: string
+          description: The profile ID
+          example: PRF-001
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                riskCategory:
+                  type: string
+                  enum:
+                    - CONSERVATIVE
+                    - MODERATELY_CONSERVATIVE
+                    - MODERATE
+                    - MODERATELY_AGGRESSIVE
+                    - AGGRESSIVE
+                compositeRiskScore:
+                  type: number
+                recommendedAllocation:
+                  type: object
+                maxDrawdownTolerance:
+                  type: number
+                maxVolatilityTolerance:
+                  type: number
+                isActive:
+                  type: boolean
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/RiskProfile'
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Risk profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /profiles/investor/{investorId}/profiles:
+    get:
+      summary: Get all profiles for investor
+      description: Returns all risk profiles (active and historical) for a specific investor
+      tags:
+        - Profiles
+      parameters:
+        - in: path
+          name: investorId
+          required: true
+          schema:
+            type: string
+          description: The investor ID
+          example: INV-001
+      responses:
+        '200':
+          description: Profiles retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      profiles:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/RiskProfile'
+                      count:
+                        type: integer
+                  timestamp:
+                    type: string
+                    format: date-time
+  /profiles/investor/{investorId}/profiles/active:
+    get:
+      summary: Get active profile for investor
+      description: Returns the current active risk profile for an investor with risk limits
+      tags:
+        - Profiles
+      parameters:
+        - in: path
+          name: investorId
+          required: true
+          schema:
+            type: string
+          description: The investor ID
+          example: INV-001
+      responses:
+        '200':
+          description: Active profile found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      profileId:
+                        type: string
+                        example: PRF-001
+                      investorId:
+                        type: string
+                        example: INV-001
+                      riskCategory:
+                        type: string
+                        example: MODERATE
+                      riskCategoryCode:
+                        type: integer
+                        example: 3
+                      compositeRiskScore:
+                        type: number
+                        example: 65
+                      riskToleranceScore:
+                        type: number
+                        example: 65
+                      riskCapacityScore:
+                        type: number
+                        example: 72
+                      recommendedAllocation:
+                        type: object
+                        properties:
+                          equities:
+                            type: integer
+                          fixedIncome:
+                            type: integer
+                          alternatives:
+                            type: integer
+                          cash:
+                            type: integer
+                      riskLimits:
+                        type: object
+                        properties:
+                          maxDrawdownTolerance:
+                            type: number
+                            example: 25
+                          maxVolatilityTolerance:
+                            type: number
+                            example: 18
+                          maxConcentrationLimit:
+                            type: number
+                            example: 25
+                      validFrom:
+                        type: string
+                        format: date-time
+                      isActive:
+                        type: boolean
+                        example: true
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: No active risk profile found for investor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+

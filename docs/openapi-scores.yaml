@@ -1,0 +1,316 @@
+openapi: 3.0.0
+info:
+  title: Scores API
+  version: 1.0.0
+  description: |-
+    Risk score tracking for the Risk Management System.
+    
+    This API provides:
+    - Create and retrieve point-in-time risk score snapshots
+    - Track historical risk scores for investors
+    - Get latest risk score for an investor
+
+    ## Score Types
+    - **PORTFOLIO_RISK** - Overall portfolio risk metrics
+    - **CONCENTRATION** - Concentration risk metrics
+    - **SUITABILITY** - Suitability assessment scores
+
+    ## Authentication
+    This is a demo API with **no authentication required**.
+
+    ## Data Note
+    This system uses an **in-memory datastore** that resets when the server restarts.
+  contact:
+    name: API Support
+    email: support@riskmanagement.demo
+  license:
+    name: ISC
+    url: https://opensource.org/licenses/ISC
+servers:
+  - url: https://risk-management-system-f04b786dc797.herokuapp.com/api/v1
+    description: Production server (Heroku)
+  - url: http://localhost:3002/api/v1
+    description: Local development server
+tags:
+  - name: Scores
+    description: Risk score tracking
+components:
+  schemas:
+    RiskScore:
+      type: object
+      properties:
+        scoreId:
+          type: string
+          example: SCR-001
+        investorId:
+          type: string
+          example: INV-001
+        profileId:
+          type: string
+          example: PRF-001
+        scoreDate:
+          type: string
+          format: date-time
+        scoreType:
+          type: string
+          enum:
+            - PORTFOLIO_RISK
+            - CONCENTRATION
+            - SUITABILITY
+        portfolioMetrics:
+          type: object
+          properties:
+            totalValue:
+              type: number
+            volatility:
+              type: number
+            beta:
+              type: number
+            sharpeRatio:
+              type: number
+            valueAtRisk95:
+              type: number
+        concentrationMetrics:
+          type: object
+        profileAlignment:
+          type: object
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: NOT_FOUND
+            message:
+              type: string
+              example: Resource not found
+        timestamp:
+          type: string
+          format: date-time
+paths:
+  /scores:
+    get:
+      summary: List all risk scores
+      description: Returns all point-in-time risk score snapshots
+      tags:
+        - Scores
+      responses:
+        '200':
+          description: List of all risk scores
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      scores:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/RiskScore'
+                      count:
+                        type: integer
+                  timestamp:
+                    type: string
+                    format: date-time
+    post:
+      summary: Create risk score
+      description: Creates a new risk score snapshot (typically from analysis results)
+      tags:
+        - Scores
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - investorId
+                - scoreType
+              properties:
+                investorId:
+                  type: string
+                  example: INV-001
+                profileId:
+                  type: string
+                  example: PRF-001
+                scoreType:
+                  type: string
+                  enum:
+                    - PORTFOLIO_RISK
+                    - CONCENTRATION
+                    - SUITABILITY
+                  example: PORTFOLIO_RISK
+                portfolioMetrics:
+                  type: object
+                  properties:
+                    totalValue:
+                      type: number
+                    volatility:
+                      type: number
+                    beta:
+                      type: number
+                    sharpeRatio:
+                      type: number
+                    valueAtRisk95:
+                      type: number
+                concentrationMetrics:
+                  type: object
+                profileAlignment:
+                  type: object
+      responses:
+        '201':
+          description: Score created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      scoreId:
+                        type: string
+                      scoreDate:
+                        type: string
+                        format: date-time
+                      investorId:
+                        type: string
+                      scoreType:
+                        type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+  /scores/{scoreId}:
+    get:
+      summary: Get score by ID
+      description: Returns a single risk score snapshot
+      tags:
+        - Scores
+      parameters:
+        - in: path
+          name: scoreId
+          required: true
+          schema:
+            type: string
+          description: The score ID
+          example: SCR-001
+      responses:
+        '200':
+          description: Score found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/RiskScore'
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Risk score not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /scores/investor/{investorId}/scores:
+    get:
+      summary: Get all scores for investor
+      description: Returns all historical risk scores for a specific investor
+      tags:
+        - Scores
+      parameters:
+        - in: path
+          name: investorId
+          required: true
+          schema:
+            type: string
+          description: The investor ID
+          example: INV-001
+      responses:
+        '200':
+          description: Scores retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      scores:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/RiskScore'
+                      count:
+                        type: integer
+                  timestamp:
+                    type: string
+                    format: date-time
+  /scores/investor/{investorId}/scores/latest:
+    get:
+      summary: Get latest score for investor
+      description: Returns the most recent risk score for an investor
+      tags:
+        - Scores
+      parameters:
+        - in: path
+          name: investorId
+          required: true
+          schema:
+            type: string
+          description: The investor ID
+          example: INV-001
+      responses:
+        '200':
+          description: Latest score found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/RiskScore'
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: No risk scores found for investor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+

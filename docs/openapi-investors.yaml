@@ -1,0 +1,499 @@
+openapi: 3.0.0
+info:
+  title: Investors API
+  version: 1.0.0
+  description: |-
+    Investor management operations for the Risk Management System.
+    
+    This API provides CRUD operations for managing investor records including:
+    - Create, read, update, and delete investors
+    - Retrieve investor by customer ID (banking core reference)
+    - Get investor with their active risk profile
+
+    ## Authentication
+    This is a demo API with **no authentication required**.
+
+    ## Data Note
+    This system uses an **in-memory datastore** that resets when the server restarts.
+  contact:
+    name: API Support
+    email: support@riskmanagement.demo
+  license:
+    name: ISC
+    url: https://opensource.org/licenses/ISC
+servers:
+  - url: https://risk-management-system-f04b786dc797.herokuapp.com/api/v1
+    description: Production server (Heroku)
+  - url: http://localhost:3002/api/v1
+    description: Local development server
+tags:
+  - name: Investors
+    description: Investor management operations
+components:
+  schemas:
+    Investor:
+      type: object
+      properties:
+        investorId:
+          type: string
+          example: INV-001
+        customerId:
+          type: string
+          example: CUST-001
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Smith
+        email:
+          type: string
+          example: john.smith@email.com
+        phone:
+          type: string
+          example: 555-0101
+        dateOfBirth:
+          type: string
+          format: date
+          example: '1975-03-15'
+        age:
+          type: integer
+          example: 49
+        employmentStatus:
+          type: string
+          enum:
+            - EMPLOYED
+            - SELF_EMPLOYED
+            - RETIRED
+            - UNEMPLOYED
+          example: EMPLOYED
+        annualIncome:
+          type: number
+          example: 150000
+        netWorth:
+          type: number
+          example: 850000
+        liquidNetWorth:
+          type: number
+          example: 450000
+        investmentExperience:
+          type: string
+          enum:
+            - NOVICE
+            - INTERMEDIATE
+            - EXPERIENCED
+            - EXPERT
+          example: EXPERIENCED
+        investmentHorizon:
+          type: string
+          enum:
+            - SHORT_TERM
+            - MEDIUM_TERM
+            - LONG_TERM
+          example: LONG_TERM
+    RiskProfile:
+      type: object
+      properties:
+        profileId:
+          type: string
+          example: PRF-001
+        investorId:
+          type: string
+          example: INV-001
+        riskCategory:
+          type: string
+          enum:
+            - CONSERVATIVE
+            - MODERATELY_CONSERVATIVE
+            - MODERATE
+            - MODERATELY_AGGRESSIVE
+            - AGGRESSIVE
+          example: MODERATE
+        compositeRiskScore:
+          type: number
+          example: 65
+        recommendedAllocation:
+          type: object
+          properties:
+            equities:
+              type: number
+              example: 60
+            fixedIncome:
+              type: number
+              example: 30
+            alternatives:
+              type: number
+              example: 5
+            cash:
+              type: number
+              example: 5
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: NOT_FOUND
+            message:
+              type: string
+              example: Resource not found
+        timestamp:
+          type: string
+          format: date-time
+paths:
+  /investors:
+    get:
+      summary: List all investors
+      description: Returns all 50 investors with their demographic and financial information
+      tags:
+        - Investors
+      responses:
+        '200':
+          description: List of all investors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      investors:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Investor'
+                      count:
+                        type: integer
+                        example: 50
+                  timestamp:
+                    type: string
+                    format: date-time
+    post:
+      summary: Create new investor
+      description: Creates a new investor record
+      tags:
+        - Investors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - customerId
+                - firstName
+                - lastName
+                - email
+              properties:
+                customerId:
+                  type: string
+                  example: CUST-051
+                firstName:
+                  type: string
+                  example: Jane
+                lastName:
+                  type: string
+                  example: Doe
+                email:
+                  type: string
+                  example: jane.doe@email.com
+                phone:
+                  type: string
+                  example: 555-0151
+                dateOfBirth:
+                  type: string
+                  format: date
+                  example: '1985-06-15'
+                employmentStatus:
+                  type: string
+                  enum:
+                    - EMPLOYED
+                    - SELF_EMPLOYED
+                    - RETIRED
+                    - UNEMPLOYED
+                annualIncome:
+                  type: number
+                  example: 120000
+                netWorth:
+                  type: number
+                  example: 500000
+                liquidNetWorth:
+                  type: number
+                  example: 250000
+                investmentExperience:
+                  type: string
+                  enum:
+                    - NOVICE
+                    - INTERMEDIATE
+                    - EXPERIENCED
+                    - EXPERT
+                investmentHorizon:
+                  type: string
+                  enum:
+                    - SHORT_TERM
+                    - MEDIUM_TERM
+                    - LONG_TERM
+      responses:
+        '201':
+          description: Investor created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Investor'
+                  timestamp:
+                    type: string
+                    format: date-time
+  /investors/{investorId}:
+    get:
+      summary: Get investor by ID
+      description: Returns a single investor by their investor ID
+      tags:
+        - Investors
+      parameters:
+        - in: path
+          name: investorId
+          required: true
+          schema:
+            type: string
+          description: The investor ID (e.g., INV-001)
+          example: INV-001
+      responses:
+        '200':
+          description: Investor found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Investor'
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Investor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      summary: Update investor
+      description: Updates an existing investor's information
+      tags:
+        - Investors
+      parameters:
+        - in: path
+          name: investorId
+          required: true
+          schema:
+            type: string
+          description: The investor ID
+          example: INV-001
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                employmentStatus:
+                  type: string
+                  enum:
+                    - EMPLOYED
+                    - SELF_EMPLOYED
+                    - RETIRED
+                    - UNEMPLOYED
+                annualIncome:
+                  type: number
+                netWorth:
+                  type: number
+                liquidNetWorth:
+                  type: number
+                investmentExperience:
+                  type: string
+                  enum:
+                    - NOVICE
+                    - INTERMEDIATE
+                    - EXPERIENCED
+                    - EXPERT
+                investmentHorizon:
+                  type: string
+                  enum:
+                    - SHORT_TERM
+                    - MEDIUM_TERM
+                    - LONG_TERM
+      responses:
+        '200':
+          description: Investor updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Investor'
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Investor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete investor
+      description: Deletes an investor record
+      tags:
+        - Investors
+      parameters:
+        - in: path
+          name: investorId
+          required: true
+          schema:
+            type: string
+          description: The investor ID
+          example: INV-001
+      responses:
+        '200':
+          description: Investor deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Investor deleted successfully
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Investor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /investors/{investorId}/profile:
+    get:
+      summary: Get investor with active risk profile
+      description: Returns investor details along with their current active risk profile
+      tags:
+        - Investors
+      parameters:
+        - in: path
+          name: investorId
+          required: true
+          schema:
+            type: string
+          description: The investor ID
+          example: INV-001
+      responses:
+        '200':
+          description: Investor with profile found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      investor:
+                        $ref: '#/components/schemas/Investor'
+                      riskProfile:
+                        $ref: '#/components/schemas/RiskProfile'
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Investor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /investors/customer/{customerId}:
+    get:
+      summary: Get investor by customer ID
+      description: Returns investor by their external customer ID reference (from banking core system)
+      tags:
+        - Investors
+      parameters:
+        - in: path
+          name: customerId
+          required: true
+          schema:
+            type: string
+          description: The customer ID from banking core system
+          example: CUST-001
+      responses:
+        '200':
+          description: Investor found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Investor'
+                  timestamp:
+                    type: string
+                    format: date-time
+        '404':
+          description: Investor not found for customer ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
