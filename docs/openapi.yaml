@@ -683,8 +683,12 @@ paths:
                               type: object
                           worstHit:
                             type: array
+                            items:
+                              type: object
                           bestProtected:
                             type: array
+                            items:
+                              type: object
                       riskProfileComparison:
                         type: object
                         properties:
@@ -786,6 +790,8 @@ paths:
                         type: array
                         description: Array of stress test results (if requested)
                         nullable: true
+                        items:
+                          type: object
                       recommendations:
                         type: object
                         description: Generated recommendations
@@ -1870,6 +1876,8 @@ paths:
                               type: object
                             recommendations:
                               type: array
+                              items:
+                                type: object
                       count:
                         type: integer
                   timestamp:
