@@ -55,6 +55,7 @@ const scoresRoute = require('./routes/scores');
 const scenariosRoute = require('./routes/scenarios');
 const recommendationsRoute = require('./routes/recommendations');
 const analysisRoute = require('./routes/analysis');
+const mcpRoute = require('./routes/mcp');
 
 // Mount routes
 app.use('/api/v1/health', healthRoute);
@@ -67,6 +68,9 @@ app.use('/api/v1/scenarios', scenariosRoute);
 app.use('/api/v1/recommendations', recommendationsRoute);
 app.use('/api/v1/analysis', analysisRoute);
 
+// MCP Routes (Model Context Protocol for AI agents)
+app.use('/mcp', mcpRoute);
+
 // API Info endpoint
 app.get('/api', (req, res) => {
   res.json({
@@ -75,7 +79,14 @@ app.get('/api', (req, res) => {
     version: '1.0.0',
     documentation: '/api-docs',
     webUI: '/',
-    health: '/api/v1/health'
+    health: '/api/v1/health',
+    mcp: {
+      description: 'Model Context Protocol server for AI agent integration',
+      httpStreamable: '/mcp',
+      sse: '/mcp/sse',
+      health: '/mcp/health',
+      tools: '/mcp/tools'
+    }
   });
 });
 
@@ -114,7 +125,10 @@ app.listen(PORT, HOST, () => {
   console.log(`🌐 Web UI: ${BASE_URL}/`);
   console.log(`📚 API Docs: ${BASE_URL}/api-docs`);
   console.log(`🔌 API Base: ${BASE_URL}/api/v1`);
-  console.log(`💚 Health: ${BASE_URL}/api/v1/health\n`);
+  console.log(`💚 Health: ${BASE_URL}/api/v1/health`);
+  console.log(`🤖 MCP Server: ${BASE_URL}/mcp`);
+  console.log(`📡 MCP SSE: ${BASE_URL}/mcp/sse`);
+  console.log(`🔧 MCP Health: ${BASE_URL}/mcp/health\n`);
 });
 
 module.exports = app;
